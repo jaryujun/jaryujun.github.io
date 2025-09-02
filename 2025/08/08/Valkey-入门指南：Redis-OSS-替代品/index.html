@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="一、Valkey 简介Valkey 是一款开源的 Redis 替代品，它提供了与 Redis 相似的 API 和功能，但具有更高的性能和更低的成本。Valkey 的架构设计非常独特，它将 Redis 的内存存储和持久化功能分离，使得 Valkey 可以同时支持内存存储和持久化存储。 二、Valkey 的架构设计">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Valkey 入门指南：Redis OSS 替代品">
+<meta property="og:url" content="http://example.com/2025/08/08/Valkey-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9ARedis-OSS-%E6%9B%BF%E4%BB%A3%E5%93%81/index.html">
+<meta property="og:site_name" content="Jaryujun Blog">
+<meta property="og:description" content="一、Valkey 简介Valkey 是一款开源的 Redis 替代品，它提供了与 Redis 相似的 API 和功能，但具有更高的性能和更低的成本。Valkey 的架构设计非常独特，它将 Redis 的内存存储和持久化功能分离，使得 Valkey 可以同时支持内存存储和持久化存储。 二、Valkey 的架构设计">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-08-08T07:17:00.000Z">
+<meta property="article:modified_time" content="2025-08-08T07:17:31.049Z">
+<meta property="article:author" content="Jaryujun">
+<meta property="article:tag" content="Valkey">
+<meta property="article:tag" content="Redis">
+<meta property="article:tag" content="数据库">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Valkey 入门指南：Redis OSS 替代品</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/projects/">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/08/13/n8n-%E5%B7%A5%E4%BD%9C%E6%B5%81%E8%87%AA%E5%8A%A8%E5%8C%96%E5%B9%B3%E5%8F%B0%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/08/07/Hexo-GitHub-Pages-%E5%BF%AB%E9%80%9F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2025/08/08/Valkey-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9ARedis-OSS-%E6%9B%BF%E4%BB%A3%E5%93%81/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2025/08/08/Valkey-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9ARedis-OSS-%E6%9B%BF%E4%BB%A3%E5%93%81/&text=Valkey 入门指南：Redis OSS 替代品"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2025/08/08/Valkey-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9ARedis-OSS-%E6%9B%BF%E4%BB%A3%E5%93%81/&title=Valkey 入门指南：Redis OSS 替代品"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2025/08/08/Valkey-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9ARedis-OSS-%E6%9B%BF%E4%BB%A3%E5%93%81/&is_video=false&description=Valkey 入门指南：Redis OSS 替代品"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Valkey 入门指南：Redis OSS 替代品&body=Check out this article: http://example.com/2025/08/08/Valkey-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9ARedis-OSS-%E6%9B%BF%E4%BB%A3%E5%93%81/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2025/08/08/Valkey-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9ARedis-OSS-%E6%9B%BF%E4%BB%A3%E5%93%81/&title=Valkey 入门指南：Redis OSS 替代品"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2025/08/08/Valkey-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9ARedis-OSS-%E6%9B%BF%E4%BB%A3%E5%93%81/&title=Valkey 入门指南：Redis OSS 替代品"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2025/08/08/Valkey-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9ARedis-OSS-%E6%9B%BF%E4%BB%A3%E5%93%81/&title=Valkey 入门指南：Redis OSS 替代品"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2025/08/08/Valkey-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9ARedis-OSS-%E6%9B%BF%E4%BB%A3%E5%93%81/&title=Valkey 入门指南：Redis OSS 替代品"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2025/08/08/Valkey-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9ARedis-OSS-%E6%9B%BF%E4%BB%A3%E5%93%81/&name=Valkey 入门指南：Redis OSS 替代品&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2025/08/08/Valkey-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9ARedis-OSS-%E6%9B%BF%E4%BB%A3%E5%93%81/&t=Valkey 入门指南：Redis OSS 替代品"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81Valkey-%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">一、Valkey 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Valkey-%E7%9A%84%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">2.</span> <span class="toc-text">二、Valkey 的架构设计</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Valkey 入门指南：Redis OSS 替代品
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Jaryujun</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-08-08T07:17:00.000Z" class="dt-published" itemprop="datePublished">2025-08-08</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Redis/" rel="tag">Redis</a>, <a class="p-category" href="/tags/Valkey/" rel="tag">Valkey</a>, <a class="p-category" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="一、Valkey-简介"><a href="#一、Valkey-简介" class="headerlink" title="一、Valkey 简介"></a>一、Valkey 简介</h2><p>Valkey 是一款开源的 Redis 替代品，它提供了与 Redis 相似的 API 和功能，但具有更高的性能和更低的成本。Valkey 的架构设计非常独特，它将 Redis 的内存存储和持久化功能分离，使得 Valkey 可以同时支持内存存储和持久化存储。</p>
+<h2 id="二、Valkey-的架构设计"><a href="#二、Valkey-的架构设计" class="headerlink" title="二、Valkey 的架构设计"></a>二、Valkey 的架构设计</h2>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/projects/">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81Valkey-%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">一、Valkey 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Valkey-%E7%9A%84%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">2.</span> <span class="toc-text">二、Valkey 的架构设计</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2025/08/08/Valkey-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9ARedis-OSS-%E6%9B%BF%E4%BB%A3%E5%93%81/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2025/08/08/Valkey-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9ARedis-OSS-%E6%9B%BF%E4%BB%A3%E5%93%81/&text=Valkey 入门指南：Redis OSS 替代品"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2025/08/08/Valkey-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9ARedis-OSS-%E6%9B%BF%E4%BB%A3%E5%93%81/&title=Valkey 入门指南：Redis OSS 替代品"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2025/08/08/Valkey-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9ARedis-OSS-%E6%9B%BF%E4%BB%A3%E5%93%81/&is_video=false&description=Valkey 入门指南：Redis OSS 替代品"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Valkey 入门指南：Redis OSS 替代品&body=Check out this article: http://example.com/2025/08/08/Valkey-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9ARedis-OSS-%E6%9B%BF%E4%BB%A3%E5%93%81/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2025/08/08/Valkey-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9ARedis-OSS-%E6%9B%BF%E4%BB%A3%E5%93%81/&title=Valkey 入门指南：Redis OSS 替代品"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2025/08/08/Valkey-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9ARedis-OSS-%E6%9B%BF%E4%BB%A3%E5%93%81/&title=Valkey 入门指南：Redis OSS 替代品"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2025/08/08/Valkey-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9ARedis-OSS-%E6%9B%BF%E4%BB%A3%E5%93%81/&title=Valkey 入门指南：Redis OSS 替代品"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2025/08/08/Valkey-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9ARedis-OSS-%E6%9B%BF%E4%BB%A3%E5%93%81/&title=Valkey 入门指南：Redis OSS 替代品"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2025/08/08/Valkey-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9ARedis-OSS-%E6%9B%BF%E4%BB%A3%E5%93%81/&name=Valkey 入门指南：Redis OSS 替代品&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2025/08/08/Valkey-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9ARedis-OSS-%E6%9B%BF%E4%BB%A3%E5%93%81/&t=Valkey 入门指南：Redis OSS 替代品"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2025
+    Jaryujun
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/projects/">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
