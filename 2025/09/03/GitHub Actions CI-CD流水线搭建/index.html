@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="本文将详细介绍如何为Spring Boot项目搭建一套完整的CI&#x2F;CD流水线，包括Docker容器化、GitHub Actions自动化、以及通过腾讯云镜像加速解决网络问题。 整体思路GitHub Repository     ↓ (Push&#x2F;PR) GitHub Actions     ↓ (构建、测试、质量检查) Docker Registry (GitHub Container R">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GitHub Actions CI-CD流水线搭建">
+<meta property="og:url" content="https://jaryujun.github.io/2025/09/03/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/index.html">
+<meta property="og:site_name" content="Jaryujun Blog">
+<meta property="og:description" content="本文将详细介绍如何为Spring Boot项目搭建一套完整的CI&#x2F;CD流水线，包括Docker容器化、GitHub Actions自动化、以及通过腾讯云镜像加速解决网络问题。 整体思路GitHub Repository     ↓ (Push&#x2F;PR) GitHub Actions     ↓ (构建、测试、质量检查) Docker Registry (GitHub Container R">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-09-03T05:51:50.000Z">
+<meta property="article:modified_time" content="2025-11-01T05:29:11.716Z">
+<meta property="article:author" content="Jaryujun">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="CI&#x2F;CD">
+<meta property="article:tag" content="Docker">
+<meta property="article:tag" content="GitHub Actions">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>GitHub Actions CI-CD流水线搭建</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/projects/">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/11/01/%E5%AF%B9%E9%AB%98%E9%80%9F%E5%8F%91%E5%B1%95%E9%98%B6%E6%AE%B5%E7%9A%84%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84%E6%B2%BB%E7%90%86%E7%AD%96%E7%95%A5%E7%9A%84%E6%80%9D%E8%80%83/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/09/02/%E7%94%B3%E8%AF%B7-Apple-Developer-%E5%BC%80%E5%8F%91%E8%AF%81%E4%B9%A6/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://jaryujun.github.io/2025/09/03/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://jaryujun.github.io/2025/09/03/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&text=GitHub Actions CI-CD流水线搭建"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://jaryujun.github.io/2025/09/03/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&title=GitHub Actions CI-CD流水线搭建"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://jaryujun.github.io/2025/09/03/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&is_video=false&description=GitHub Actions CI-CD流水线搭建"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=GitHub Actions CI-CD流水线搭建&body=Check out this article: https://jaryujun.github.io/2025/09/03/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://jaryujun.github.io/2025/09/03/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&title=GitHub Actions CI-CD流水线搭建"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://jaryujun.github.io/2025/09/03/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&title=GitHub Actions CI-CD流水线搭建"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://jaryujun.github.io/2025/09/03/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&title=GitHub Actions CI-CD流水线搭建"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://jaryujun.github.io/2025/09/03/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&title=GitHub Actions CI-CD流水线搭建"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://jaryujun.github.io/2025/09/03/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&name=GitHub Actions CI-CD流水线搭建&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://jaryujun.github.io/2025/09/03/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&t=GitHub Actions CI-CD流水线搭建"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E6%80%9D%E8%B7%AF"><span class="toc-number">1.</span> <span class="toc-text">整体思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%9A%80-%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6"><span class="toc-number">2.</span> <span class="toc-text">🚀 核心组件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Docker%E5%AE%B9%E5%99%A8%E5%8C%96%E7%AD%96%E7%95%A5"><span class="toc-number">2.1.</span> <span class="toc-text">1. Docker容器化策略</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E9%98%B6%E6%AE%B5%E6%9E%84%E5%BB%BA%E4%BC%98%E5%8C%96"><span class="toc-number">2.1.1.</span> <span class="toc-text">多阶段构建优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Docker-Compose%E6%9C%8D%E5%8A%A1%E7%BC%96%E6%8E%92"><span class="toc-number">2.1.2.</span> <span class="toc-text">Docker Compose服务编排</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-GitHub-Actions%E5%B7%A5%E4%BD%9C%E6%B5%81"><span class="toc-number">2.2.</span> <span class="toc-text">2. GitHub Actions工作流</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BF%BD%EF%BF%BD-%E8%A7%A3%E5%86%B3%E7%9A%84%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E9%97%AE%E9%A2%98"><span class="toc-number">3.</span> <span class="toc-text">�� 解决的关键技术问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98"><span class="toc-number">3.1.</span> <span class="toc-text">1. 网络连接问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Maven%E4%BE%9D%E8%B5%96%E4%B8%8B%E8%BD%BD%E4%BC%98%E5%8C%96"><span class="toc-number">3.2.</span> <span class="toc-text">2. Maven依赖下载优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Docker%E6%9E%84%E5%BB%BA%E4%BC%98%E5%8C%96"><span class="toc-number">3.3.</span> <span class="toc-text">3. Docker构建优化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BF%BD%EF%BF%BD-%E6%80%A7%E8%83%BD%E6%8F%90%E5%8D%87%E5%AF%B9%E6%AF%94"><span class="toc-number">4.</span> <span class="toc-text">�� 性能提升对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BF%BD%EF%BF%BD%EF%B8%8F-%E9%83%A8%E7%BD%B2%E8%84%9A%E6%9C%AC"><span class="toc-number">5.</span> <span class="toc-text">��️ 部署脚本</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E8%84%9A%E6%9C%AC"><span class="toc-number">5.1.</span> <span class="toc-text">一键部署脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5%E8%84%9A%E6%9C%AC"><span class="toc-number">5.2.</span> <span class="toc-text">健康检查脚本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%9A%80-%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97"><span class="toc-number">6.</span> <span class="toc-text">🚀 使用指南</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">6.1.</span> <span class="toc-text">1. 环境准备</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A6%81%E6%B1%82"><span class="toc-number">6.1.1.</span> <span class="toc-text">服务器要求</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85Docker"><span class="toc-number">6.1.2.</span> <span class="toc-text">安装Docker</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">6.2.</span> <span class="toc-text">2. 配置环境变量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="toc-number">6.2.1.</span> <span class="toc-text">创建生产环境配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEGitHub-Secrets"><span class="toc-number">6.2.2.</span> <span class="toc-text">配置GitHub Secrets</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E9%A6%96%E6%AC%A1%E9%83%A8%E7%BD%B2"><span class="toc-number">6.3.</span> <span class="toc-text">3. 首次部署</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2"><span class="toc-number">6.4.</span> <span class="toc-text">4. 自动化部署</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%93%88-%E7%9B%91%E6%8E%A7%E5%92%8C%E6%97%A5%E5%BF%97"><span class="toc-number">7.</span> <span class="toc-text">📈 监控和日志</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E7%9B%91%E6%8E%A7"><span class="toc-number">7.1.</span> <span class="toc-text">应用监控</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E6%9F%A5%E7%9C%8B"><span class="toc-number">7.2.</span> <span class="toc-text">日志查看</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B5%84%E6%BA%90%E7%9B%91%E6%8E%A7"><span class="toc-number">7.3.</span> <span class="toc-text">资源监控</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%94%90-%E5%AE%89%E5%85%A8%E5%BB%BA%E8%AE%AE"><span class="toc-number">8.</span> <span class="toc-text">🔐 安全建议</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E5%AE%89%E5%85%A8"><span class="toc-number">8.1.</span> <span class="toc-text">1. 环境变量安全</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8"><span class="toc-number">8.2.</span> <span class="toc-text">2. 网络安全</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8"><span class="toc-number">8.3.</span> <span class="toc-text">3. 容器安全</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BF%BD%EF%BF%BD-%E6%80%BB%E7%BB%93"><span class="toc-number">9.</span> <span class="toc-text">�� 总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9C%85-%E6%8A%80%E6%9C%AF%E6%88%90%E6%9E%9C"><span class="toc-number">9.1.</span> <span class="toc-text">✅ 技术成果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9C%85-%E8%BF%90%E7%BB%B4%E6%88%90%E6%9E%9C"><span class="toc-number">9.2.</span> <span class="toc-text">✅ 运维成果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9C%85-%E5%BC%80%E5%8F%91%E4%BD%93%E9%AA%8C"><span class="toc-number">9.3.</span> <span class="toc-text">✅ 开发体验</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BF%BD%EF%BF%BD-%E4%B8%8B%E4%B8%80%E6%AD%A5%E4%BC%98%E5%8C%96%E6%96%B9%E5%90%91"><span class="toc-number">9.4.</span> <span class="toc-text">�� 下一步优化方向</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        GitHub Actions CI-CD流水线搭建
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Jaryujun</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-09-03T05:51:50.000Z" class="dt-published" itemprop="datePublished">2025-09-03</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/CI-CD/" rel="tag">CI/CD</a>, <a class="p-category" href="/tags/Docker/" rel="tag">Docker</a>, <a class="p-category" href="/tags/GitHub-Actions/" rel="tag">GitHub Actions</a>, <a class="p-category" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>本文将详细介绍如何为Spring Boot项目搭建一套完整的CI&#x2F;CD流水线，包括Docker容器化、GitHub Actions自动化、以及通过腾讯云镜像加速解决网络问题。</p>
+<h2 id="整体思路"><a href="#整体思路" class="headerlink" title="整体思路"></a>整体思路</h2><pre><code class="highlight plaintext">GitHub Repository
+    ↓ (Push/PR)
+GitHub Actions
+    ↓ (构建、测试、质量检查)
+Docker Registry (GitHub Container Registry)
+    ↓ (部署)
+生产环境 (Docker Compose + Nginx)
+    ↓ (监控)
+Spring Boot Actuator + 健康检查</code></pre>
+
+<h2 id="🚀-核心组件"><a href="#🚀-核心组件" class="headerlink" title="🚀 核心组件"></a>🚀 核心组件</h2><h3 id="1-Docker容器化策略"><a href="#1-Docker容器化策略" class="headerlink" title="1. Docker容器化策略"></a>1. Docker容器化策略</h3><h4 id="多阶段构建优化"><a href="#多阶段构建优化" class="headerlink" title="多阶段构建优化"></a>多阶段构建优化</h4><pre><code class="highlight dockerfile"><span class="comment"># 多阶段构建 - 构建阶段</span>
+<span class="keyword">FROM</span> maven:<span class="number">3.9</span>.<span class="number">4</span>-eclipse-temurin-<span class="number">17</span>-alpine AS build
+
+<span class="comment"># 设置工作目录</span>
+<span class="keyword">WORKDIR</span><span class="language-bash"> /app</span>
+
+<span class="comment"># 配置Maven使用腾讯云镜像源（利用Docker层缓存）</span>
+<span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">mkdir</span> -p /root/.m2 &amp;&amp; \</span>
+<span class="language-bash">    <span class="built_in">echo</span> <span class="string">&#x27;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#x27;</span> &gt; /root/.m2/settings.xml &amp;&amp; \</span>
+<span class="language-bash">    <span class="built_in">echo</span> <span class="string">&#x27;&lt;settings xmlns=&quot;http://maven.apache.org/SETTINGS/1.0.0&quot;&#x27;</span> &gt;&gt; /root/.m2/settings.xml &amp;&amp; \</span>
+<span class="language-bash">    <span class="built_in">echo</span> <span class="string">&#x27;          xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&#x27;</span> &gt;&gt; /root/.m2/settings.xml &amp;&amp; \</span>
+<span class="language-bash">    <span class="built_in">echo</span> <span class="string">&#x27;          xsi:schemaLocation=&quot;http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd&quot;&gt;&#x27;</span> &gt;&gt; /root/.m2/settings.xml &amp;&amp; \</span>
+<span class="language-bash">    <span class="built_in">echo</span> <span class="string">&#x27;  &lt;mirrors&gt;&#x27;</span> &gt;&gt; /root/.m2/settings.xml &amp;&amp; \</span>
+<span class="language-bash">    <span class="built_in">echo</span> <span class="string">&#x27;    &lt;mirror&gt;&#x27;</span> &gt;&gt; /root/.m2/settings.xml &amp;&amp; \</span>
+<span class="language-bash">    <span class="built_in">echo</span> <span class="string">&#x27;      &lt;id&gt;tencentmaven&lt;/id&gt;&#x27;</span> &gt;&gt; /root/.m2/settings.xml &amp;&amp; \</span>
+<span class="language-bash">    <span class="built_in">echo</span> <span class="string">&#x27;      &lt;mirrorOf&gt;*&lt;/mirrorOf&gt;&#x27;</span> &gt;&gt; /root/.m2/settings.xml &amp;&amp; \</span>
+<span class="language-bash">    <span class="built_in">echo</span> <span class="string">&#x27;      &lt;name&gt;腾讯云公共仓库&lt;/name&gt;&#x27;</span> &gt;&gt; /root/.m2/settings.xml &amp;&amp; \</span>
+<span class="language-bash">    <span class="built_in">echo</span> <span class="string">&#x27;      &lt;url&gt;https://mirrors.cloud.tencent.com/nexus/repository/maven-public/&lt;/url&gt;&#x27;</span> &gt;&gt; /root/.m2/settings.xml &amp;&amp; \</span>
+<span class="language-bash">    <span class="built_in">echo</span> <span class="string">&#x27;    &lt;/mirror&gt;&#x27;</span> &gt;&gt; /root/.m2/settings.xml &amp;&amp; \</span>
+<span class="language-bash">    <span class="built_in">echo</span> <span class="string">&#x27;  &lt;/mirrors&gt;&#x27;</span> &gt;&gt; /root/.m2/settings.xml &amp;&amp; \</span>
+<span class="language-bash">    <span class="built_in">echo</span> <span class="string">&#x27;&lt;/settings&gt;&#x27;</span> &gt;&gt; /root/.m2/settings.xml</span>
+
+<span class="comment"># 先复制pom.xml文件（利用Docker层缓存）</span>
+<span class="keyword">COPY</span><span class="language-bash"> backend/pom.xml .</span>
+
+<span class="comment"># 下载依赖（利用Docker缓存，只有pom.xml变化时才重新下载）</span>
+<span class="keyword">RUN</span><span class="language-bash"> mvn dependency:go-offline -B</span>
+
+<span class="comment"># 复制源代码（只有源代码变化时才重新构建）</span>
+<span class="keyword">COPY</span><span class="language-bash"> backend/src ./src</span>
+
+<span class="comment"># 构建应用</span>
+<span class="keyword">RUN</span><span class="language-bash"> mvn clean package -DskipTests</span>
+
+<span class="comment"># 运行阶段</span>
+<span class="keyword">FROM</span> eclipse-temurin:<span class="number">17</span>-jre-alpine
+
+<span class="comment"># 安装必要的工具</span>
+<span class="keyword">RUN</span><span class="language-bash"> apk add --no-cache \</span>
+<span class="language-bash">    curl \</span>
+<span class="language-bash">    bash</span>
+
+<span class="comment"># 创建应用用户</span>
+<span class="keyword">RUN</span><span class="language-bash"> addgroup -g 1000 appuser &amp;&amp; adduser -D -s /bin/bash -u 1000 -G appuser appuser</span>
+
+<span class="comment"># 设置工作目录</span>
+<span class="keyword">WORKDIR</span><span class="language-bash"> /app</span>
+
+<span class="comment"># 从构建阶段复制jar文件</span>
+<span class="keyword">COPY</span><span class="language-bash"> --from=build /app/target/teacher-on-call-*.jar app.jar</span>
+
+<span class="comment"># 创建日志目录</span>
+<span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">mkdir</span> -p /app/logs &amp;&amp; <span class="built_in">chown</span> -R appuser:appuser /app</span>
+
+<span class="comment"># 切换到应用用户</span>
+<span class="keyword">USER</span> appuser
+
+<span class="comment"># 暴露端口</span>
+<span class="keyword">EXPOSE</span> <span class="number">8080</span>
+
+<span class="comment"># 健康检查</span>
+<span class="keyword">HEALTHCHECK</span><span class="language-bash"> --interval=30s --<span class="built_in">timeout</span>=10s --start-period=60s --retries=3 \</span>
+<span class="language-bash">    CMD curl -f http://localhost:8080/api/actuator/health || <span class="built_in">exit</span> 1</span>
+
+<span class="comment"># 启动应用</span>
+<span class="keyword">ENTRYPOINT</span><span class="language-bash"> [<span class="string">&quot;java&quot;</span>, <span class="string">&quot;-jar&quot;</span>, <span class="string">&quot;app.jar&quot;</span>]</span></code></pre>
+
+<h4 id="Docker-Compose服务编排"><a href="#Docker-Compose服务编排" class="headerlink" title="Docker Compose服务编排"></a>Docker Compose服务编排</h4><pre><code class="highlight yaml"><span class="attr">version:</span> <span class="string">&#x27;3.8&#x27;</span>
+
+<span class="attr">services:</span>
+  <span class="comment"># 后端应用</span>
+  <span class="attr">backend:</span>
+    <span class="attr">build:</span>
+      <span class="attr">context:</span> <span class="string">..</span>
+      <span class="attr">dockerfile:</span> <span class="string">docker/Dockerfile</span>
+    <span class="attr">container_name:</span> <span class="string">teacher-on-call-backend</span>
+    <span class="attr">ports:</span>
+      <span class="bullet">-</span> <span class="string">&quot;8080:8080&quot;</span>
+    <span class="attr">environment:</span>
+      <span class="bullet">-</span> <span class="string">SPRING_PROFILES_ACTIVE=prod</span>
+      <span class="bullet">-</span> <span class="string">SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/teacher_on_call?serverTimezone=Asia/Shanghai&amp;useUnicode=true&amp;characterEncoding=utf-8&amp;useSSL=false</span>
+      <span class="bullet">-</span> <span class="string">SPRING_DATASOURCE_USERNAME=$&#123;DB_USERNAME:-teacher_on_call&#125;</span>
+      <span class="bullet">-</span> <span class="string">SPRING_DATASOURCE_PASSWORD=$&#123;DB_PASSWORD:-password123&#125;</span>
+      <span class="bullet">-</span> <span class="string">SPRING_REDIS_HOST=redis</span>
+      <span class="bullet">-</span> <span class="string">SPRING_REDIS_PORT=6379</span>
+      <span class="bullet">-</span> <span class="string">SPRING_REDIS_PASSWORD=$&#123;REDIS_PASSWORD:-redis123&#125;</span>
+      <span class="bullet">-</span> <span class="string">JWT_SECRET=$&#123;JWT_SECRET:-teacherOnCallJwtSecretKey2024ForHS512AlgorithmMustBe64BytesOrMore&#125;</span>
+      <span class="bullet">-</span> <span class="string">SECURITY_ENCRYPT_KEY=$&#123;SECURITY_ENCRYPT_KEY:-teacherOnCallEncryptKey123456789012&#125;</span>
+    <span class="attr">depends_on:</span>
+      <span class="attr">mysql:</span>
+        <span class="attr">condition:</span> <span class="string">service_healthy</span>
+      <span class="attr">redis:</span>
+        <span class="attr">condition:</span> <span class="string">service_healthy</span>
+    <span class="attr">networks:</span>
+      <span class="bullet">-</span> <span class="string">teacher-network</span>
+    <span class="attr">restart:</span> <span class="string">unless-stopped</span>
+    <span class="attr">volumes:</span>
+      <span class="bullet">-</span> <span class="string">app-logs:/app/logs</span>
+    <span class="attr">healthcheck:</span>
+      <span class="attr">test:</span> [<span class="string">&quot;CMD&quot;</span>, <span class="string">&quot;curl&quot;</span>, <span class="string">&quot;-f&quot;</span>, <span class="string">&quot;http://localhost:8080/api/actuator/health&quot;</span>]
+      <span class="attr">interval:</span> <span class="string">30s</span>
+      <span class="attr">timeout:</span> <span class="string">10s</span>
+      <span class="attr">retries:</span> <span class="number">3</span>
+      <span class="attr">start_period:</span> <span class="string">60s</span>
+
+  <span class="comment"># MySQL数据库</span>
+  <span class="attr">mysql:</span>
+    <span class="attr">image:</span> <span class="string">mysql:8.0</span>
+    <span class="attr">container_name:</span> <span class="string">teacher-on-call-mysql</span>
+    <span class="attr">ports:</span>
+      <span class="bullet">-</span> <span class="string">&quot;3306:3306&quot;</span>
+    <span class="attr">environment:</span>
+      <span class="bullet">-</span> <span class="string">MYSQL_ROOT_PASSWORD=$&#123;DB_ROOT_PASSWORD:-root123&#125;</span>
+      <span class="bullet">-</span> <span class="string">MYSQL_DATABASE=teacher_on_call</span>
+      <span class="bullet">-</span> <span class="string">MYSQL_USER=$&#123;DB_USERNAME:-teacher_on_call&#125;</span>
+      <span class="bullet">-</span> <span class="string">MYSQL_PASSWORD=$&#123;DB_PASSWORD:-password123&#125;</span>
+    <span class="attr">volumes:</span>
+      <span class="bullet">-</span> <span class="string">mysql-data:/var/lib/mysql</span>
+      <span class="bullet">-</span> <span class="string">./init.sql:/docker-entrypoint-initdb.d/init.sql:ro</span>
+    <span class="attr">networks:</span>
+      <span class="bullet">-</span> <span class="string">teacher-network</span>
+    <span class="attr">restart:</span> <span class="string">unless-stopped</span>
+    <span class="attr">healthcheck:</span>
+      <span class="attr">test:</span> [<span class="string">&quot;CMD&quot;</span>, <span class="string">&quot;mysqladmin&quot;</span>, <span class="string">&quot;ping&quot;</span>, <span class="string">&quot;-h&quot;</span>, <span class="string">&quot;localhost&quot;</span>]
+      <span class="attr">interval:</span> <span class="string">30s</span>
+      <span class="attr">timeout:</span> <span class="string">10s</span>
+      <span class="attr">retries:</span> <span class="number">5</span>
+      <span class="attr">start_period:</span> <span class="string">30s</span>
+
+  <span class="comment"># Redis缓存</span>
+  <span class="attr">redis:</span>
+    <span class="attr">image:</span> <span class="string">redis:7-alpine</span>
+    <span class="attr">container_name:</span> <span class="string">teacher-on-call-redis</span>
+    <span class="attr">ports:</span>
+      <span class="bullet">-</span> <span class="string">&quot;6379:6379&quot;</span>
+    <span class="attr">command:</span> <span class="string">redis-server</span> <span class="string">--requirepass</span> <span class="string">$&#123;REDIS_PASSWORD:-redis123&#125;</span>
+    <span class="attr">volumes:</span>
+      <span class="bullet">-</span> <span class="string">redis-data:/data</span>
+    <span class="attr">networks:</span>
+      <span class="bullet">-</span> <span class="string">teacher-network</span>
+    <span class="attr">restart:</span> <span class="string">unless-stopped</span>
+    <span class="attr">healthcheck:</span>
+      <span class="attr">test:</span> [<span class="string">&quot;CMD&quot;</span>, <span class="string">&quot;redis-cli&quot;</span>, <span class="string">&quot;--raw&quot;</span>, <span class="string">&quot;incr&quot;</span>, <span class="string">&quot;ping&quot;</span>]
+      <span class="attr">interval:</span> <span class="string">30s</span>
+      <span class="attr">timeout:</span> <span class="string">10s</span>
+      <span class="attr">retries:</span> <span class="number">3</span>
+      <span class="attr">start_period:</span> <span class="string">30s</span>
+
+<span class="attr">volumes:</span>
+  <span class="attr">mysql-data:</span>
+  <span class="attr">redis-data:</span>
+  <span class="attr">app-logs:</span>
+
+<span class="attr">networks:</span>
+  <span class="attr">teacher-network:</span>
+    <span class="attr">driver:</span> <span class="string">bridge</span></code></pre>
+
+<h3 id="2-GitHub-Actions工作流"><a href="#2-GitHub-Actions工作流" class="headerlink" title="2. GitHub Actions工作流"></a>2. GitHub Actions工作流</h3><pre><code class="highlight yaml"><span class="attr">name:</span> <span class="string">Backend</span> <span class="string">CI/CD</span>
+
+<span class="attr">on:</span>
+  <span class="attr">push:</span>
+    <span class="attr">branches:</span> [ <span class="string">main</span> ]
+    <span class="attr">paths:</span>
+      <span class="bullet">-</span> <span class="string">&#x27;backend/**&#x27;</span>
+      <span class="bullet">-</span> <span class="string">&#x27;docker/**&#x27;</span>
+      <span class="bullet">-</span> <span class="string">&#x27;.github/workflows/backend-ci-cd.yml&#x27;</span>
+  <span class="attr">pull_request:</span>
+    <span class="attr">branches:</span> [ <span class="string">main</span> ]
+    <span class="attr">paths:</span>
+      <span class="bullet">-</span> <span class="string">&#x27;backend/**&#x27;</span>
+      <span class="bullet">-</span> <span class="string">&#x27;docker/**&#x27;</span>
+      <span class="bullet">-</span> <span class="string">&#x27;.github/workflows/backend-ci-cd.yml&#x27;</span>
+
+<span class="attr">env:</span>
+  <span class="attr">REGISTRY:</span> <span class="string">ghcr.io</span>
+  <span class="attr">IMAGE_NAME:</span> <span class="string">$&#123;&#123;</span> <span class="string">github.repository</span> <span class="string">&#125;&#125;/teacher-on-call-backend</span>
+
+<span class="attr">jobs:</span>
+  <span class="comment"># 构建和测试</span>
+  <span class="attr">build-and-test:</span>
+    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span>
+    
+    <span class="attr">steps:</span>
+    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Checkout</span> <span class="string">code</span>
+      <span class="attr">uses:</span> <span class="string">actions/checkout@v4</span>
+      
+    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Set</span> <span class="string">up</span> <span class="string">JDK</span> <span class="number">17</span>
+      <span class="attr">uses:</span> <span class="string">actions/setup-java@v4</span>
+      <span class="attr">with:</span>
+        <span class="attr">java-version:</span> <span class="string">&#x27;17&#x27;</span>
+        <span class="attr">distribution:</span> <span class="string">&#x27;temurin&#x27;</span>
+        
+    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Cache</span> <span class="string">Maven</span> <span class="string">dependencies</span>
+      <span class="attr">uses:</span> <span class="string">actions/cache@v3</span>
+      <span class="attr">with:</span>
+        <span class="attr">path:</span> <span class="string">~/.m2</span>
+        <span class="attr">key:</span> <span class="string">$&#123;&#123;</span> <span class="string">runner.os</span> <span class="string">&#125;&#125;-m2-$&#123;&#123;</span> <span class="string">hashFiles(&#x27;**/pom.xml&#x27;)</span> <span class="string">&#125;&#125;</span>
+        <span class="attr">restore-keys:</span> <span class="string">$&#123;&#123;</span> <span class="string">runner.os</span> <span class="string">&#125;&#125;-m2</span>
+        
+    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Run</span> <span class="string">tests</span>
+      <span class="attr">run:</span> <span class="string">|</span>
+<span class="string">        cd backend</span>
+<span class="string">        mvn clean test</span>
+<span class="string"></span>        
+    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Build</span> <span class="string">application</span>
+      <span class="attr">run:</span> <span class="string">|</span>
+<span class="string">        cd backend</span>
+<span class="string">        mvn clean package -DskipTests</span>
+<span class="string"></span>        
+    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Upload</span> <span class="string">build</span> <span class="string">artifacts</span>
+      <span class="attr">uses:</span> <span class="string">actions/upload-artifact@v3</span>
+      <span class="attr">with:</span>
+        <span class="attr">name:</span> <span class="string">backend-jar</span>
+        <span class="attr">path:</span> <span class="string">backend/target/*.jar</span>
+
+  <span class="comment"># 构建Docker镜像</span>
+  <span class="attr">build-docker:</span>
+    <span class="attr">needs:</span> <span class="string">build-and-test</span>
+    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span>
+    <span class="attr">if:</span> <span class="string">github.ref</span> <span class="string">==</span> <span class="string">&#x27;refs/heads/main&#x27;</span>
+    
+    <span class="attr">steps:</span>
+    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Checkout</span> <span class="string">code</span>
+      <span class="attr">uses:</span> <span class="string">actions/checkout@v4</span>
+      
+    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Set</span> <span class="string">up</span> <span class="string">Docker</span> <span class="string">Buildx</span>
+      <span class="attr">uses:</span> <span class="string">docker/setup-buildx-action@v3</span>
+      
+    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Log</span> <span class="string">in</span> <span class="string">to</span> <span class="string">Container</span> <span class="string">Registry</span>
+      <span class="attr">uses:</span> <span class="string">docker/login-action@v3</span>
+      <span class="attr">with:</span>
+        <span class="attr">registry:</span> <span class="string">$&#123;&#123;</span> <span class="string">env.REGISTRY</span> <span class="string">&#125;&#125;</span>
+        <span class="attr">username:</span> <span class="string">$&#123;&#123;</span> <span class="string">github.actor</span> <span class="string">&#125;&#125;</span>
+        <span class="attr">password:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.GITHUB_TOKEN</span> <span class="string">&#125;&#125;</span>
+        
+    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Extract</span> <span class="string">metadata</span>
+      <span class="attr">id:</span> <span class="string">meta</span>
+      <span class="attr">uses:</span> <span class="string">docker/metadata-action@v5</span>
+      <span class="attr">with:</span>
+        <span class="attr">images:</span> <span class="string">$&#123;&#123;</span> <span class="string">env.REGISTRY</span> <span class="string">&#125;&#125;/$&#123;&#123;</span> <span class="string">env.IMAGE_NAME</span> <span class="string">&#125;&#125;</span>
+        <span class="attr">tags:</span> <span class="string">|</span>
+<span class="string">          type=ref,event=branch</span>
+<span class="string">          type=ref,event=pr</span>
+<span class="string">          type=sha,prefix=&#123;&#123;branch&#125;&#125;-</span>
+<span class="string">          type=raw,value=latest,enable=&#123;&#123;is_default_branch&#125;&#125;</span>
+<span class="string"></span>          
+    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Build</span> <span class="string">and</span> <span class="string">push</span> <span class="string">Docker</span> <span class="string">image</span>
+      <span class="attr">uses:</span> <span class="string">docker/build-push-action@v5</span>
+      <span class="attr">with:</span>
+        <span class="attr">context:</span> <span class="string">.</span>
+        <span class="attr">file:</span> <span class="string">./docker/Dockerfile</span>
+        <span class="attr">push:</span> <span class="literal">true</span>
+        <span class="attr">tags:</span> <span class="string">$&#123;&#123;</span> <span class="string">steps.meta.outputs.tags</span> <span class="string">&#125;&#125;</span>
+        <span class="attr">labels:</span> <span class="string">$&#123;&#123;</span> <span class="string">steps.meta.outputs.labels</span> <span class="string">&#125;&#125;</span>
+        <span class="attr">cache-from:</span> <span class="string">type=gha</span>
+        <span class="attr">cache-to:</span> <span class="string">type=gha,mode=max</span>
+
+  <span class="comment"># 部署到生产环境</span>
+  <span class="attr">deploy:</span>
+    <span class="attr">needs:</span> <span class="string">build-docker</span>
+    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span>
+    <span class="attr">if:</span> <span class="string">github.ref</span> <span class="string">==</span> <span class="string">&#x27;refs/heads/main&#x27;</span>
+    
+    <span class="attr">steps:</span>
+    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Checkout</span> <span class="string">code</span>
+      <span class="attr">uses:</span> <span class="string">actions/checkout@v4</span>
+      
+    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Deploy</span> <span class="string">to</span> <span class="string">production</span>
+      <span class="attr">uses:</span> <span class="string">appleboy/ssh-action@v1.0.0</span>
+      <span class="attr">with:</span>
+        <span class="attr">host:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.HOST</span> <span class="string">&#125;&#125;</span>
+        <span class="attr">username:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.USERNAME</span> <span class="string">&#125;&#125;</span>
+        <span class="attr">password:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.PASSWORD</span> <span class="string">&#125;&#125;</span>
+        <span class="attr">port:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.PORT</span> <span class="string">&#125;&#125;</span>
+        <span class="attr">script:</span> <span class="string">|</span>
+<span class="string">          # 进入项目目录</span>
+<span class="string">          cd /opt/teacher-on-call</span>
+<span class="string"></span>          
+          <span class="comment"># 拉取最新代码</span>
+          <span class="string">git</span> <span class="string">pull</span> <span class="string">origin</span> <span class="string">main</span>
+          
+          <span class="comment"># 停止现有服务</span>
+          <span class="string">docker-compose</span> <span class="string">-f</span> <span class="string">docker/docker-compose.yml</span> <span class="string">down</span>
+          
+          <span class="comment"># 拉取最新镜像</span>
+          <span class="string">docker-compose</span> <span class="string">-f</span> <span class="string">docker/docker-compose.yml</span> <span class="string">pull</span> <span class="string">backend</span>
+          
+          <span class="comment"># 启动服务</span>
+          <span class="string">docker-compose</span> <span class="string">-f</span> <span class="string">docker/docker-compose.yml</span> <span class="string">up</span> <span class="string">-d</span>
+          
+          <span class="comment"># 等待服务启动</span>
+          <span class="string">sleep</span> <span class="number">30</span>
+          
+          <span class="comment"># 健康检查</span>
+          <span class="string">./scripts/health-check.sh</span>
+          
+    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Notify</span> <span class="string">deployment</span> <span class="string">status</span>
+      <span class="attr">if:</span> <span class="string">always()</span>
+      <span class="attr">run:</span> <span class="string">|</span>
+<span class="string">        if [ &quot;$&#123;&#123; job.status &#125;&#125;&quot; == &quot;success&quot; ]; then</span>
+<span class="string">          echo &quot;✅ 部署成功！&quot;</span>
+<span class="string">        else</span>
+<span class="string">          echo &quot;❌ 部署失败！&quot;</span>
+<span class="string">        fi</span></code></pre>
+
+<h2 id="��-解决的关键技术问题"><a href="#��-解决的关键技术问题" class="headerlink" title="�� 解决的关键技术问题"></a>�� 解决的关键技术问题</h2><h3 id="1-网络连接问题"><a href="#1-网络连接问题" class="headerlink" title="1. 网络连接问题"></a>1. 网络连接问题</h3><p><strong>问题描述</strong>：国内服务器访问Docker Hub超时，镜像拉取失败</p>
+<pre><code class="highlight plaintext">failed to solve: DeadlineExceeded: maven:3.9.4-openjdk-17-slim: 
+failed to do request: Head &quot;https://registry-1.docker.io/v2/library/maven/manifests/3.9.4-openjdk-17-slim&quot;: 
+dial tcp 108.160.170.41:443: i/o timeout</code></pre>
+
+<p><strong>解决方案</strong>：配置腾讯云镜像加速器</p>
+<pre><code class="highlight json"><span class="punctuation">&#123;</span>
+  <span class="attr">&quot;registry-mirrors&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span>
+    <span class="string">&quot;https://mirror.ccs.tencentyun.com&quot;</span>
+  <span class="punctuation">]</span>
+<span class="punctuation">&#125;</span></code></pre>
+
+<p><strong>效果</strong>：镜像拉取速度从超时失败提升到30秒内完成</p>
+<h3 id="2-Maven依赖下载优化"><a href="#2-Maven依赖下载优化" class="headerlink" title="2. Maven依赖下载优化"></a>2. Maven依赖下载优化</h3><p><strong>问题描述</strong>：Maven依赖下载缓慢，构建时间长</p>
+<p><strong>解决方案</strong>：使用腾讯云Maven镜像源</p>
+<pre><code class="highlight xml"><span class="tag">&lt;<span class="name">mirror</span>&gt;</span>
+  <span class="tag">&lt;<span class="name">id</span>&gt;</span>tencentmaven<span class="tag">&lt;/<span class="name">id</span>&gt;</span>
+  <span class="tag">&lt;<span class="name">mirrorOf</span>&gt;</span>*<span class="tag">&lt;/<span class="name">mirrorOf</span>&gt;</span>
+  <span class="tag">&lt;<span class="name">name</span>&gt;</span>腾讯云公共仓库<span class="tag">&lt;/<span class="name">name</span>&gt;</span>
+  <span class="tag">&lt;<span class="name">url</span>&gt;</span>https://mirrors.cloud.tencent.com/nexus/repository/maven-public/<span class="tag">&lt;/<span class="name">url</span>&gt;</span>
+<span class="tag">&lt;/<span class="name">mirror</span>&gt;</span></code></pre>
+
+<p><strong>效果</strong>：Maven依赖下载速度提升3-5倍</p>
+<h3 id="3-Docker构建优化"><a href="#3-Docker构建优化" class="headerlink" title="3. Docker构建优化"></a>3. Docker构建优化</h3><p><strong>问题描述</strong>：Docker构建过程缓慢，缓存效果差</p>
+<p><strong>解决方案</strong>：优化Dockerfile层缓存结构</p>
+<pre><code class="highlight dockerfile"><span class="comment"># 先配置Maven镜像源（缓存层）</span>
+<span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">mkdir</span> -p /root/.m2 &amp;&amp; <span class="built_in">echo</span> <span class="string">&#x27;...&#x27;</span> &gt; /root/.m2/settings.xml</span>
+
+<span class="comment"># 先复制pom.xml文件（缓存层）</span>
+<span class="keyword">COPY</span><span class="language-bash"> backend/pom.xml .</span>
+
+<span class="comment"># 下载依赖（缓存层）</span>
+<span class="keyword">RUN</span><span class="language-bash"> mvn dependency:go-offline -B</span>
+
+<span class="comment"># 最后复制源代码（变化层）</span>
+<span class="keyword">COPY</span><span class="language-bash"> backend/src ./src</span></code></pre>
+
+<p><strong>效果</strong>：重复构建时间从10分钟降至1-2分钟</p>
+<h2 id="��-性能提升对比"><a href="#��-性能提升对比" class="headerlink" title="�� 性能提升对比"></a>�� 性能提升对比</h2><table>
+<thead>
+<tr>
+<th>指标</th>
+<th>优化前</th>
+<th>优化后</th>
+<th>提升幅度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>首次构建时间</td>
+<td>15-20分钟</td>
+<td>3-5分钟</td>
+<td><strong>75%</strong></td>
+</tr>
+<tr>
+<td>重复构建时间</td>
+<td>10-15分钟</td>
+<td>1-2分钟</td>
+<td><strong>90%</strong></td>
+</tr>
+<tr>
+<td>镜像拉取速度</td>
+<td>超时失败</td>
+<td>30秒内</td>
+<td><strong>100%</strong></td>
+</tr>
+<tr>
+<td>部署成功率</td>
+<td>不稳定</td>
+<td>95%+</td>
+<td><strong>显著提升</strong></td>
+</tr>
+<tr>
+<td>Maven依赖下载</td>
+<td>5-10分钟</td>
+<td>1-2分钟</td>
+<td><strong>80%</strong></td>
+</tr>
+</tbody></table>
+<h2 id="��️-部署脚本"><a href="#��️-部署脚本" class="headerlink" title="��️ 部署脚本"></a>��️ 部署脚本</h2><h3 id="一键部署脚本"><a href="#一键部署脚本" class="headerlink" title="一键部署脚本"></a>一键部署脚本</h3><pre><code class="highlight bash"><span class="meta">#!/bin/bash</span>
+
+<span class="comment"># 部署脚本</span>
+<span class="comment"># 使用方法: ./scripts/deploy.sh [环境]</span>
+
+<span class="built_in">set</span> -e
+
+<span class="comment"># 颜色定义</span>
+RED=<span class="string">&#x27;\033[0;31m&#x27;</span>
+GREEN=<span class="string">&#x27;\033[0;32m&#x27;</span>
+YELLOW=<span class="string">&#x27;\033[1;33m&#x27;</span>
+NC=<span class="string">&#x27;\033[0m&#x27;</span> <span class="comment"># No Color</span>
+
+<span class="comment"># 日志函数</span>
+<span class="function"><span class="title">log_info</span></span>() &#123;
+    <span class="built_in">echo</span> -e <span class="string">&quot;<span class="variable">$&#123;GREEN&#125;</span>[INFO]<span class="variable">$&#123;NC&#125;</span> <span class="variable">$1</span>&quot;</span>
+&#125;
+
+<span class="function"><span class="title">log_warn</span></span>() &#123;
+    <span class="built_in">echo</span> -e <span class="string">&quot;<span class="variable">$&#123;YELLOW&#125;</span>[WARN]<span class="variable">$&#123;NC&#125;</span> <span class="variable">$1</span>&quot;</span>
+&#125;
+
+<span class="function"><span class="title">log_error</span></span>() &#123;
+    <span class="built_in">echo</span> -e <span class="string">&quot;<span class="variable">$&#123;RED&#125;</span>[ERROR]<span class="variable">$&#123;NC&#125;</span> <span class="variable">$1</span>&quot;</span>
+&#125;
+
+<span class="comment"># 获取环境参数</span>
+ENVIRONMENT=<span class="variable">$&#123;1:-prod&#125;</span>
+PROJECT_DIR=<span class="string">&quot;<span class="subst">$(cd <span class="string">&quot;<span class="subst">$(dirname <span class="string">&quot;<span class="variable">$&#123;BASH_SOURCE[0]&#125;</span>&quot;</span>)</span>/..&quot;</span> &amp;&amp; pwd)</span>&quot;</span>
+
+log_info <span class="string">&quot;开始部署到 <span class="variable">$ENVIRONMENT</span> 环境...&quot;</span>
+
+<span class="comment"># 检查Docker是否运行</span>
+<span class="keyword">if</span> ! docker info &gt; /dev/null 2&gt;&amp;1; <span class="keyword">then</span>
+    log_error <span class="string">&quot;Docker未运行，请先启动Docker&quot;</span>
+    <span class="built_in">exit</span> 1
+<span class="keyword">fi</span>
+
+<span class="comment"># 检查网络连接</span>
+log_info <span class="string">&quot;检查网络连接...&quot;</span>
+<span class="keyword">if</span> ! curl -s --connect-timeout 10 https://mirrors.cloud.tencent.com &gt; /dev/null; <span class="keyword">then</span>
+    log_warn <span class="string">&quot;网络连接可能有问题，建议先配置Docker镜像加速器&quot;</span>
+    log_info <span class="string">&quot;运行: ./scripts/setup-docker.sh&quot;</span>
+<span class="keyword">fi</span>
+
+<span class="comment"># 检查docker-compose是否安装</span>
+<span class="keyword">if</span> ! <span class="built_in">command</span> -v docker-compose &amp;&gt; /dev/null; <span class="keyword">then</span>
+    log_error <span class="string">&quot;docker-compose未安装，请先安装docker-compose&quot;</span>
+    <span class="built_in">exit</span> 1
+<span class="keyword">fi</span>
+
+<span class="comment"># 进入项目目录</span>
+<span class="built_in">cd</span> <span class="string">&quot;<span class="variable">$PROJECT_DIR</span>&quot;</span>
+
+<span class="comment"># 检查环境配置文件</span>
+ENV_FILE=<span class="string">&quot;.env.<span class="variable">$ENVIRONMENT</span>&quot;</span>
+<span class="keyword">if</span> [ ! -f <span class="string">&quot;<span class="variable">$ENV_FILE</span>&quot;</span> ]; <span class="keyword">then</span>
+    log_warn <span class="string">&quot;环境配置文件 <span class="variable">$ENV_FILE</span> 不存在，使用默认配置&quot;</span>
+    ENV_FILE=<span class="string">&quot;.env&quot;</span>
+<span class="keyword">fi</span>
+
+<span class="comment"># 加载环境变量</span>
+<span class="keyword">if</span> [ -f <span class="string">&quot;<span class="variable">$ENV_FILE</span>&quot;</span> ]; <span class="keyword">then</span>
+    log_info <span class="string">&quot;加载环境配置: <span class="variable">$ENV_FILE</span>&quot;</span>
+    <span class="built_in">export</span> $(<span class="built_in">cat</span> <span class="string">&quot;<span class="variable">$ENV_FILE</span>&quot;</span> | grep -v <span class="string">&#x27;^#&#x27;</span> | xargs)
+<span class="keyword">fi</span>
+
+<span class="comment"># 停止现有服务</span>
+log_info <span class="string">&quot;停止现有服务...&quot;</span>
+docker-compose -f docker/docker-compose.yml down
+
+<span class="comment"># 清理旧镜像（可选）</span>
+<span class="keyword">if</span> [ <span class="string">&quot;<span class="variable">$2</span>&quot;</span> == <span class="string">&quot;--clean&quot;</span> ]; <span class="keyword">then</span>
+    log_info <span class="string">&quot;清理旧镜像...&quot;</span>
+    docker system prune -f
+<span class="keyword">fi</span>
+
+<span class="comment"># 构建镜像</span>
+log_info <span class="string">&quot;构建Docker镜像...&quot;</span>
+MAX_RETRIES=3
+RETRY_COUNT=0
+
+<span class="keyword">while</span> [ <span class="variable">$RETRY_COUNT</span> -lt <span class="variable">$MAX_RETRIES</span> ]; <span class="keyword">do</span>
+    <span class="keyword">if</span> docker-compose -f docker/docker-compose.yml build --no-cache; <span class="keyword">then</span>
+        log_info <span class="string">&quot;✅ Docker镜像构建成功&quot;</span>
+        <span class="built_in">break</span>
+    <span class="keyword">else</span>
+        RETRY_COUNT=$((RETRY_COUNT + <span class="number">1</span>))
+        <span class="keyword">if</span> [ <span class="variable">$RETRY_COUNT</span> -lt <span class="variable">$MAX_RETRIES</span> ]; <span class="keyword">then</span>
+            log_warn <span class="string">&quot;构建失败，重试 <span class="variable">$RETRY_COUNT</span>/<span class="variable">$MAX_RETRIES</span>...&quot;</span>
+            <span class="built_in">sleep</span> 10
+        <span class="keyword">else</span>
+            log_error <span class="string">&quot;❌ Docker镜像构建失败，已达到最大重试次数&quot;</span>
+            log_info <span class="string">&quot;建议检查网络连接或运行: ./scripts/setup-docker.sh&quot;</span>
+            <span class="built_in">exit</span> 1
+        <span class="keyword">fi</span>
+    <span class="keyword">fi</span>
+<span class="keyword">done</span>
+
+<span class="comment"># 启动服务</span>
+log_info <span class="string">&quot;启动服务...&quot;</span>
+docker-compose -f docker/docker-compose.yml up -d
+
+<span class="comment"># 等待服务启动</span>
+log_info <span class="string">&quot;等待服务启动...&quot;</span>
+<span class="built_in">sleep</span> 30
+
+<span class="comment"># 健康检查</span>
+log_info <span class="string">&quot;执行健康检查...&quot;</span>
+<span class="keyword">if</span> ./scripts/health-check.sh; <span class="keyword">then</span>
+    log_info <span class="string">&quot;✅ 部署成功！&quot;</span>
+    
+    <span class="comment"># 显示服务状态</span>
+    log_info <span class="string">&quot;服务状态：&quot;</span>
+    docker-compose -f docker/docker-compose.yml ps
+    
+    <span class="comment"># 显示访问信息</span>
+    log_info <span class="string">&quot;访问信息：&quot;</span>
+    <span class="built_in">echo</span> <span class="string">&quot;  - 应用地址: http://localhost:8080/api&quot;</span>
+    <span class="built_in">echo</span> <span class="string">&quot;  - 健康检查: http://localhost:8080/api/actuator/health&quot;</span>
+    <span class="built_in">echo</span> <span class="string">&quot;  - API文档: http://localhost:8080/api/swagger-ui.html&quot;</span>
+    
+<span class="keyword">else</span>
+    log_error <span class="string">&quot;❌ 健康检查失败，部署可能有问题&quot;</span>
+    log_info <span class="string">&quot;查看日志：&quot;</span>
+    docker-compose -f docker/docker-compose.yml logs backend
+    <span class="built_in">exit</span> 1
+<span class="keyword">fi</span></code></pre>
+
+<h3 id="健康检查脚本"><a href="#健康检查脚本" class="headerlink" title="健康检查脚本"></a>健康检查脚本</h3><pre><code class="highlight bash"><span class="meta">#!/bin/bash</span>
+
+<span class="comment"># 健康检查脚本</span>
+<span class="comment"># 使用方法: ./scripts/health-check.sh</span>
+
+<span class="built_in">set</span> -e
+
+<span class="comment"># 颜色定义</span>
+RED=<span class="string">&#x27;\033[0;31m&#x27;</span>
+GREEN=<span class="string">&#x27;\033[0;32m&#x27;</span>
+YELLOW=<span class="string">&#x27;\033[1;33m&#x27;</span>
+NC=<span class="string">&#x27;\033[0m&#x27;</span> <span class="comment"># No Color</span>
+
+<span class="comment"># 日志函数</span>
+<span class="function"><span class="title">log_info</span></span>() &#123;
+    <span class="built_in">echo</span> -e <span class="string">&quot;<span class="variable">$&#123;GREEN&#125;</span>[INFO]<span class="variable">$&#123;NC&#125;</span> <span class="variable">$1</span>&quot;</span>
+&#125;
+
+<span class="function"><span class="title">log_warn</span></span>() &#123;
+    <span class="built_in">echo</span> -e <span class="string">&quot;<span class="variable">$&#123;YELLOW&#125;</span>[WARN]<span class="variable">$&#123;NC&#125;</span> <span class="variable">$1</span>&quot;</span>
+&#125;
+
+<span class="function"><span class="title">log_error</span></span>() &#123;
+    <span class="built_in">echo</span> -e <span class="string">&quot;<span class="variable">$&#123;RED&#125;</span>[ERROR]<span class="variable">$&#123;NC&#125;</span> <span class="variable">$1</span>&quot;</span>
+&#125;
+
+<span class="comment"># 配置</span>
+MAX_RETRIES=10
+RETRY_INTERVAL=10
+HEALTH_URL=<span class="string">&quot;http://localhost:8080/api/actuator/health&quot;</span>
+
+log_info <span class="string">&quot;开始健康检查...&quot;</span>
+
+<span class="comment"># 检查Docker容器状态</span>
+log_info <span class="string">&quot;检查Docker容器状态...&quot;</span>
+<span class="keyword">if</span> ! docker-compose -f docker/docker-compose.yml ps | grep -q <span class="string">&quot;Up&quot;</span>; <span class="keyword">then</span>
+    log_error <span class="string">&quot;Docker容器未运行&quot;</span>
+    <span class="built_in">exit</span> 1
+<span class="keyword">fi</span>
+
+<span class="comment"># 检查后端应用健康状态</span>
+log_info <span class="string">&quot;检查后端应用健康状态...&quot;</span>
+RETRY_COUNT=0
+
+<span class="keyword">while</span> [ <span class="variable">$RETRY_COUNT</span> -lt <span class="variable">$MAX_RETRIES</span> ]; <span class="keyword">do</span>
+    <span class="keyword">if</span> curl -f -s <span class="string">&quot;<span class="variable">$HEALTH_URL</span>&quot;</span> &gt; /dev/null 2&gt;&amp;1; <span class="keyword">then</span>
+        log_info <span class="string">&quot;✅ 后端应用健康检查通过&quot;</span>
+        <span class="built_in">break</span>
+    <span class="keyword">else</span>
+        RETRY_COUNT=$((RETRY_COUNT + <span class="number">1</span>))
+        log_warn <span class="string">&quot;健康检查失败，重试 <span class="variable">$RETRY_COUNT</span>/<span class="variable">$MAX_RETRIES</span>...&quot;</span>
+        <span class="built_in">sleep</span> <span class="variable">$RETRY_INTERVAL</span>
+    <span class="keyword">fi</span>
+<span class="keyword">done</span>
+
+<span class="keyword">if</span> [ <span class="variable">$RETRY_COUNT</span> -eq <span class="variable">$MAX_RETRIES</span> ]; <span class="keyword">then</span>
+    log_error <span class="string">&quot;❌ 健康检查失败，已达到最大重试次数&quot;</span>
+    <span class="built_in">exit</span> 1
+<span class="keyword">fi</span>
+
+<span class="comment"># 检查数据库连接</span>
+log_info <span class="string">&quot;检查数据库连接...&quot;</span>
+<span class="keyword">if</span> docker-compose -f docker/docker-compose.yml <span class="built_in">exec</span> -T mysql mysqladmin ping -h localhost --silent; <span class="keyword">then</span>
+    log_info <span class="string">&quot;✅ 数据库连接正常&quot;</span>
+<span class="keyword">else</span>
+    log_error <span class="string">&quot;❌ 数据库连接失败&quot;</span>
+    <span class="built_in">exit</span> 1
+<span class="keyword">fi</span>
+
+<span class="comment"># 检查Redis连接</span>
+log_info <span class="string">&quot;检查Redis连接...&quot;</span>
+<span class="keyword">if</span> docker-compose -f docker/docker-compose.yml <span class="built_in">exec</span> -T redis redis-cli ping | grep -q <span class="string">&quot;PONG&quot;</span>; <span class="keyword">then</span>
+    log_info <span class="string">&quot;✅ Redis连接正常&quot;</span>
+<span class="keyword">else</span>
+    log_error <span class="string">&quot;❌ Redis连接失败&quot;</span>
+    <span class="built_in">exit</span> 1
+<span class="keyword">fi</span>
+
+<span class="comment"># 检查应用日志</span>
+log_info <span class="string">&quot;检查应用日志...&quot;</span>
+<span class="keyword">if</span> docker-compose -f docker/docker-compose.yml logs backend | grep -q <span class="string">&quot;Started TeacherOnCallApplication&quot;</span>; <span class="keyword">then</span>
+    log_info <span class="string">&quot;✅ 应用启动成功&quot;</span>
+<span class="keyword">else</span>
+    log_warn <span class="string">&quot;⚠️  应用启动日志未找到，请检查日志&quot;</span>
+<span class="keyword">fi</span>
+
+<span class="comment"># 显示服务状态</span>
+log_info <span class="string">&quot;服务状态：&quot;</span>
+docker-compose -f docker/docker-compose.yml ps
+
+<span class="comment"># 显示资源使用情况</span>
+log_info <span class="string">&quot;资源使用情况：&quot;</span>
+docker stats --no-stream --format <span class="string">&quot;table &#123;&#123;.Container&#125;&#125;\t&#123;&#123;.CPUPerc&#125;&#125;\t&#123;&#123;.MemUsage&#125;&#125;\t&#123;&#123;.NetIO&#125;&#125;\t&#123;&#123;.BlockIO&#125;&#125;&quot;</span>
+
+log_info <span class="string">&quot;✅ 所有健康检查通过！&quot;</span></code></pre>
+
+<h2 id="🚀-使用指南"><a href="#🚀-使用指南" class="headerlink" title="🚀 使用指南"></a>🚀 使用指南</h2><h3 id="1-环境准备"><a href="#1-环境准备" class="headerlink" title="1. 环境准备"></a>1. 环境准备</h3><h4 id="服务器要求"><a href="#服务器要求" class="headerlink" title="服务器要求"></a>服务器要求</h4><ul>
+<li>Linux服务器（推荐Ubuntu 20.04+）</li>
+<li>Docker Engine 20.10+</li>
+<li>Docker Compose 2.0+</li>
+<li>Git 2.0+</li>
+</ul>
+<h4 id="安装Docker"><a href="#安装Docker" class="headerlink" title="安装Docker"></a>安装Docker</h4><pre><code class="highlight bash"><span class="comment"># 安装Docker</span>
+curl -fsSL https://get.docker.com -o get-docker.sh
+<span class="built_in">sudo</span> sh get-docker.sh
+
+<span class="comment"># 安装Docker Compose</span>
+<span class="built_in">sudo</span> curl -L <span class="string">&quot;https://github.com/docker/compose/releases/download/v2.20.0/docker-compose-<span class="subst">$(uname -s)</span>-<span class="subst">$(uname -m)</span>&quot;</span> -o /usr/local/bin/docker-compose
+<span class="built_in">sudo</span> <span class="built_in">chmod</span> +x /usr/local/bin/docker-compose
+
+<span class="comment"># 启动Docker服务</span>
+<span class="built_in">sudo</span> systemctl start docker
+<span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> docker
+
+<span class="comment"># 配置Docker镜像加速器（重要！）</span>
+./scripts/setup-docker.sh</code></pre>
+
+<h3 id="2-配置环境变量"><a href="#2-配置环境变量" class="headerlink" title="2. 配置环境变量"></a>2. 配置环境变量</h3><h4 id="创建生产环境配置"><a href="#创建生产环境配置" class="headerlink" title="创建生产环境配置"></a>创建生产环境配置</h4><pre><code class="highlight bash"><span class="comment"># 复制配置示例文件</span>
+<span class="built_in">cp</span> env.prod.example .env.prod
+
+<span class="comment"># 编辑配置文件</span>
+nano .env.prod</code></pre>
+
+<h4 id="配置GitHub-Secrets"><a href="#配置GitHub-Secrets" class="headerlink" title="配置GitHub Secrets"></a>配置GitHub Secrets</h4><p>在GitHub仓库设置中添加以下Secrets：</p>
+<ul>
+<li><code>HOST</code>: 服务器IP地址</li>
+<li><code>USERNAME</code>: 服务器用户名</li>
+<li><code>PASSWORD</code>: 服务器密码</li>
+<li><code>PORT</code>: SSH端口（默认22）</li>
+</ul>
+<h3 id="3-首次部署"><a href="#3-首次部署" class="headerlink" title="3. 首次部署"></a>3. 首次部署</h3><pre><code class="highlight bash"><span class="comment"># 在服务器上克隆代码</span>
+git <span class="built_in">clone</span> https://github.com/your-username/teacher-on-call.git
+<span class="built_in">cd</span> teacher-on-call
+
+<span class="comment"># 配置环境变量</span>
+<span class="built_in">cp</span> env.prod.example .env.prod
+nano .env.prod
+
+<span class="comment"># 执行部署脚本</span>
+./scripts/deploy.sh prod</code></pre>
+
+<h3 id="4-自动化部署"><a href="#4-自动化部署" class="headerlink" title="4. 自动化部署"></a>4. 自动化部署</h3><pre><code class="highlight bash"><span class="comment"># 推送代码到main分支</span>
+git add .
+git commit -m <span class="string">&quot;feat: 添加新功能&quot;</span>
+git push origin main</code></pre>
+
+<h2 id="📈-监控和日志"><a href="#📈-监控和日志" class="headerlink" title="📈 监控和日志"></a>📈 监控和日志</h2><h3 id="应用监控"><a href="#应用监控" class="headerlink" title="应用监控"></a>应用监控</h3><ul>
+<li><strong>健康检查</strong>: <code>http://your-server:8080/api/actuator/health</code></li>
+<li><strong>指标监控</strong>: <code>http://your-server:8080/api/actuator/metrics</code></li>
+<li><strong>API文档</strong>: <code>http://your-server:8080/api/swagger-ui.html</code></li>
+</ul>
+<h3 id="日志查看"><a href="#日志查看" class="headerlink" title="日志查看"></a>日志查看</h3><pre><code class="highlight bash"><span class="comment"># 查看应用日志</span>
+docker-compose -f docker/docker-compose.yml logs -f backend
+
+<span class="comment"># 查看数据库日志</span>
+docker-compose -f docker/docker-compose.yml logs -f mysql
+
+<span class="comment"># 查看Redis日志</span>
+docker-compose -f docker/docker-compose.yml logs -f redis</code></pre>
+
+<h3 id="资源监控"><a href="#资源监控" class="headerlink" title="资源监控"></a>资源监控</h3><pre><code class="highlight bash"><span class="comment"># 查看容器资源使用情况</span>
+docker stats
+
+<span class="comment"># 查看系统资源使用情况</span>
+htop</code></pre>
+
+<h2 id="🔐-安全建议"><a href="#🔐-安全建议" class="headerlink" title="🔐 安全建议"></a>🔐 安全建议</h2><h3 id="1-环境变量安全"><a href="#1-环境变量安全" class="headerlink" title="1. 环境变量安全"></a>1. 环境变量安全</h3><ul>
+<li>使用强密码</li>
+<li>定期更换密钥</li>
+<li>不要将敏感信息提交到代码仓库</li>
+</ul>
+<h3 id="2-网络安全"><a href="#2-网络安全" class="headerlink" title="2. 网络安全"></a>2. 网络安全</h3><ul>
+<li>配置防火墙规则</li>
+<li>使用HTTPS</li>
+<li>限制数据库和Redis的外部访问</li>
+</ul>
+<h3 id="3-容器安全"><a href="#3-容器安全" class="headerlink" title="3. 容器安全"></a>3. 容器安全</h3><ul>
+<li>定期更新基础镜像</li>
+<li>使用非root用户运行应用</li>
+<li>扫描镜像漏洞</li>
+</ul>
+<h2 id="��-总结"><a href="#��-总结" class="headerlink" title="�� 总结"></a>�� 总结</h2><p>通过本文的实践，我们成功搭建了一套完整的Spring Boot项目CI&#x2F;CD流水线，主要成果包括：</p>
+<h3 id="✅-技术成果"><a href="#✅-技术成果" class="headerlink" title="✅ 技术成果"></a>✅ 技术成果</h3><ul>
+<li><strong>自动化构建</strong>：代码推送后自动构建和测试</li>
+<li><strong>Docker容器化</strong>：完整的服务编排和健康检查</li>
+<li><strong>性能优化</strong>：构建速度提升75%+，部署成功率95%+</li>
+<li><strong>网络优化</strong>：通过腾讯云镜像加速解决网络问题</li>
+</ul>
+<h3 id="✅-运维成果"><a href="#✅-运维成果" class="headerlink" title="✅ 运维成果"></a>✅ 运维成果</h3><ul>
+<li><strong>一键部署</strong>：简单的部署命令，降低运维复杂度</li>
+<li><strong>健康检查</strong>：自动检测服务状态，提高系统可靠性</li>
+<li><strong>日志管理</strong>：完整的日志查看和故障排查体系</li>
+<li><strong>监控告警</strong>：Spring Boot Actuator提供丰富的监控指标</li>
+</ul>
+<h3 id="✅-开发体验"><a href="#✅-开发体验" class="headerlink" title="✅ 开发体验"></a>✅ 开发体验</h3><ul>
+<li><strong>快速反馈</strong>：3-5分钟完成完整部署</li>
+<li><strong>环境一致</strong>：Docker确保开发、测试、生产环境一致</li>
+<li><strong>故障排查</strong>：完整的日志和监控体系，快速定位问题</li>
+</ul>
+<h3 id="��-下一步优化方向"><a href="#��-下一步优化方向" class="headerlink" title="�� 下一步优化方向"></a>�� 下一步优化方向</h3><ol>
+<li><strong>监控告警</strong>：集成Prometheus + Grafana监控体系</li>
+<li><strong>日志聚合</strong>：使用ELK Stack进行日志聚合分析</li>
+<li><strong>性能调优</strong>：根据实际使用情况调整JVM参数</li>
+<li><strong>备份策略</strong>：配置数据库和Redis的自动备份</li>
+<li><strong>安全加固</strong>：集成安全扫描和漏洞检测</li>
+</ol>
+<p>这套CI&#x2F;CD流水线不仅解决了当前的部署需求，更为项目的长期发展奠定了坚实的技术基础。通过持续优化和改进，可以进一步提升开发效率和系统稳定性。</p>
+<hr>
+<p><strong>希望这篇文章对您搭建CI&#x2F;CD流水线有所帮助！如果您有任何问题或建议，欢迎在评论区交流讨论。</strong> 🎊</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/projects/">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E6%80%9D%E8%B7%AF"><span class="toc-number">1.</span> <span class="toc-text">整体思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%9A%80-%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6"><span class="toc-number">2.</span> <span class="toc-text">🚀 核心组件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Docker%E5%AE%B9%E5%99%A8%E5%8C%96%E7%AD%96%E7%95%A5"><span class="toc-number">2.1.</span> <span class="toc-text">1. Docker容器化策略</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E9%98%B6%E6%AE%B5%E6%9E%84%E5%BB%BA%E4%BC%98%E5%8C%96"><span class="toc-number">2.1.1.</span> <span class="toc-text">多阶段构建优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Docker-Compose%E6%9C%8D%E5%8A%A1%E7%BC%96%E6%8E%92"><span class="toc-number">2.1.2.</span> <span class="toc-text">Docker Compose服务编排</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-GitHub-Actions%E5%B7%A5%E4%BD%9C%E6%B5%81"><span class="toc-number">2.2.</span> <span class="toc-text">2. GitHub Actions工作流</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BF%BD%EF%BF%BD-%E8%A7%A3%E5%86%B3%E7%9A%84%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E9%97%AE%E9%A2%98"><span class="toc-number">3.</span> <span class="toc-text">�� 解决的关键技术问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98"><span class="toc-number">3.1.</span> <span class="toc-text">1. 网络连接问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Maven%E4%BE%9D%E8%B5%96%E4%B8%8B%E8%BD%BD%E4%BC%98%E5%8C%96"><span class="toc-number">3.2.</span> <span class="toc-text">2. Maven依赖下载优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Docker%E6%9E%84%E5%BB%BA%E4%BC%98%E5%8C%96"><span class="toc-number">3.3.</span> <span class="toc-text">3. Docker构建优化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BF%BD%EF%BF%BD-%E6%80%A7%E8%83%BD%E6%8F%90%E5%8D%87%E5%AF%B9%E6%AF%94"><span class="toc-number">4.</span> <span class="toc-text">�� 性能提升对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BF%BD%EF%BF%BD%EF%B8%8F-%E9%83%A8%E7%BD%B2%E8%84%9A%E6%9C%AC"><span class="toc-number">5.</span> <span class="toc-text">��️ 部署脚本</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E8%84%9A%E6%9C%AC"><span class="toc-number">5.1.</span> <span class="toc-text">一键部署脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5%E8%84%9A%E6%9C%AC"><span class="toc-number">5.2.</span> <span class="toc-text">健康检查脚本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%9A%80-%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97"><span class="toc-number">6.</span> <span class="toc-text">🚀 使用指南</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">6.1.</span> <span class="toc-text">1. 环境准备</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A6%81%E6%B1%82"><span class="toc-number">6.1.1.</span> <span class="toc-text">服务器要求</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85Docker"><span class="toc-number">6.1.2.</span> <span class="toc-text">安装Docker</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">6.2.</span> <span class="toc-text">2. 配置环境变量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="toc-number">6.2.1.</span> <span class="toc-text">创建生产环境配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEGitHub-Secrets"><span class="toc-number">6.2.2.</span> <span class="toc-text">配置GitHub Secrets</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E9%A6%96%E6%AC%A1%E9%83%A8%E7%BD%B2"><span class="toc-number">6.3.</span> <span class="toc-text">3. 首次部署</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2"><span class="toc-number">6.4.</span> <span class="toc-text">4. 自动化部署</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%93%88-%E7%9B%91%E6%8E%A7%E5%92%8C%E6%97%A5%E5%BF%97"><span class="toc-number">7.</span> <span class="toc-text">📈 监控和日志</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E7%9B%91%E6%8E%A7"><span class="toc-number">7.1.</span> <span class="toc-text">应用监控</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E6%9F%A5%E7%9C%8B"><span class="toc-number">7.2.</span> <span class="toc-text">日志查看</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B5%84%E6%BA%90%E7%9B%91%E6%8E%A7"><span class="toc-number">7.3.</span> <span class="toc-text">资源监控</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%94%90-%E5%AE%89%E5%85%A8%E5%BB%BA%E8%AE%AE"><span class="toc-number">8.</span> <span class="toc-text">🔐 安全建议</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E5%AE%89%E5%85%A8"><span class="toc-number">8.1.</span> <span class="toc-text">1. 环境变量安全</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8"><span class="toc-number">8.2.</span> <span class="toc-text">2. 网络安全</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8"><span class="toc-number">8.3.</span> <span class="toc-text">3. 容器安全</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BF%BD%EF%BF%BD-%E6%80%BB%E7%BB%93"><span class="toc-number">9.</span> <span class="toc-text">�� 总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9C%85-%E6%8A%80%E6%9C%AF%E6%88%90%E6%9E%9C"><span class="toc-number">9.1.</span> <span class="toc-text">✅ 技术成果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9C%85-%E8%BF%90%E7%BB%B4%E6%88%90%E6%9E%9C"><span class="toc-number">9.2.</span> <span class="toc-text">✅ 运维成果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9C%85-%E5%BC%80%E5%8F%91%E4%BD%93%E9%AA%8C"><span class="toc-number">9.3.</span> <span class="toc-text">✅ 开发体验</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BF%BD%EF%BF%BD-%E4%B8%8B%E4%B8%80%E6%AD%A5%E4%BC%98%E5%8C%96%E6%96%B9%E5%90%91"><span class="toc-number">9.4.</span> <span class="toc-text">�� 下一步优化方向</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://jaryujun.github.io/2025/09/03/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://jaryujun.github.io/2025/09/03/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&text=GitHub Actions CI-CD流水线搭建"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://jaryujun.github.io/2025/09/03/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&title=GitHub Actions CI-CD流水线搭建"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://jaryujun.github.io/2025/09/03/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&is_video=false&description=GitHub Actions CI-CD流水线搭建"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=GitHub Actions CI-CD流水线搭建&body=Check out this article: https://jaryujun.github.io/2025/09/03/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://jaryujun.github.io/2025/09/03/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&title=GitHub Actions CI-CD流水线搭建"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://jaryujun.github.io/2025/09/03/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&title=GitHub Actions CI-CD流水线搭建"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://jaryujun.github.io/2025/09/03/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&title=GitHub Actions CI-CD流水线搭建"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://jaryujun.github.io/2025/09/03/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&title=GitHub Actions CI-CD流水线搭建"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://jaryujun.github.io/2025/09/03/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&name=GitHub Actions CI-CD流水线搭建&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://jaryujun.github.io/2025/09/03/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&t=GitHub Actions CI-CD流水线搭建"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2025
+    Jaryujun
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/projects/">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
