@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="别再做信息的搬运工：我的个人知识体系“祛魅”与重塑你是否也曾有过这种“生产力焦虑”？订阅了无数个 RSS 频道，收藏夹里躺着几百篇“深度好文”，手机里装满了 Obsidian、Notion 和 flomo。我们像松鼠一样疯狂屯粮，却发现自己并未因此变得睿智，反而深陷在一种被少数派作者 Cunff 称为**「生产力色情」**的幻觉中：追求那些华而不实的工具技巧，却忽略了解决问题的本质。 最近，我翻阅">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何构建个人阅读信息流">
+<meta property="og:url" content="https://jaryujun.github.io/2025/12/15/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/index.html">
+<meta property="og:site_name" content="Jaryujun Blog">
+<meta property="og:description" content="别再做信息的搬运工：我的个人知识体系“祛魅”与重塑你是否也曾有过这种“生产力焦虑”？订阅了无数个 RSS 频道，收藏夹里躺着几百篇“深度好文”，手机里装满了 Obsidian、Notion 和 flomo。我们像松鼠一样疯狂屯粮，却发现自己并未因此变得睿智，反而深陷在一种被少数派作者 Cunff 称为**「生产力色情」**的幻觉中：追求那些华而不实的工具技巧，却忽略了解决问题的本质。 最近，我翻阅">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-12-15T02:28:35.000Z">
+<meta property="article:modified_time" content="2025-12-18T07:11:00.497Z">
+<meta property="article:author" content="Jaryujun">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>如何构建个人阅读信息流</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/briefing/">briefing</a></li><!--
+     --><!--
+       --><li><a href="/projects/">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/12/15/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BA%E4%B8%AA%E4%BA%BA%E9%98%85%E8%AF%BB%E4%BF%A1%E6%81%AF%E6%B5%81/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/11/05/vibe-coding/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://jaryujun.github.io/2025/12/15/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://jaryujun.github.io/2025/12/15/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/&text=如何构建个人阅读信息流"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://jaryujun.github.io/2025/12/15/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/&title=如何构建个人阅读信息流"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://jaryujun.github.io/2025/12/15/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/&is_video=false&description=如何构建个人阅读信息流"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=如何构建个人阅读信息流&body=Check out this article: https://jaryujun.github.io/2025/12/15/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://jaryujun.github.io/2025/12/15/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/&title=如何构建个人阅读信息流"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://jaryujun.github.io/2025/12/15/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/&title=如何构建个人阅读信息流"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://jaryujun.github.io/2025/12/15/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/&title=如何构建个人阅读信息流"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://jaryujun.github.io/2025/12/15/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/&title=如何构建个人阅读信息流"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://jaryujun.github.io/2025/12/15/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/&name=如何构建个人阅读信息流&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://jaryujun.github.io/2025/12/15/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/&t=如何构建个人阅读信息流"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%AB%E5%86%8D%E5%81%9A%E4%BF%A1%E6%81%AF%E7%9A%84%E6%90%AC%E8%BF%90%E5%B7%A5%EF%BC%9A%E6%88%91%E7%9A%84%E4%B8%AA%E4%BA%BA%E7%9F%A5%E8%AF%86%E4%BD%93%E7%B3%BB%E2%80%9C%E7%A5%9B%E9%AD%85%E2%80%9D%E4%B8%8E%E9%87%8D%E5%A1%91"><span class="toc-number">1.</span> <span class="toc-text">别再做信息的搬运工：我的个人知识体系“祛魅”与重塑</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%94%BE%E5%BC%83%E2%80%9C%E8%B6%85%E4%BA%BA%E8%A7%84%E5%88%92%E2%80%9D%EF%BC%8C%E6%8E%A5%E5%8F%97%E7%AE%80%E5%8D%95%E6%BC%94%E5%8C%96"><span class="toc-number">1.1.</span> <span class="toc-text">1. 放弃“超人规划”，接受简单演化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%86%85%E5%AD%98%E4%B8%8E%E7%A1%AC%E7%9B%98%EF%BC%9A%E7%BB%99%E5%A4%A7%E8%84%91%E2%80%9C%E5%87%8F%E8%B4%9F%E2%80%9D"><span class="toc-number">1.2.</span> <span class="toc-text">2. 内存与硬盘：给大脑“减负”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BB%A5%E7%BB%88%E4%B8%BA%E5%A7%8B%EF%BC%9A%E4%BB%8E%E2%80%9C%E8%BE%93%E5%87%BA%E2%80%9D%E5%80%92%E6%8E%A8%E2%80%9C%E8%BE%93%E5%85%A5%E2%80%9D"><span class="toc-number">1.3.</span> <span class="toc-text">3. 以终为始：从“输出”倒推“输入”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E8%87%AA%E6%88%91%E8%A7%89%E5%AF%9F%EF%BC%9A%E7%B3%BB%E7%BB%9F%E7%9A%84%E2%80%9C%E5%8A%A8%E6%80%81%E4%BF%AE%E6%AD%A3%E2%80%9D"><span class="toc-number">1.4.</span> <span class="toc-text">4. 自我觉察：系统的“动态修正”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">1.5.</span> <span class="toc-text">结语</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E4%B8%8E%E8%87%B4%E6%95%AC"><span class="toc-number">1.5.1.</span> <span class="toc-text">参考与致敬</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        如何构建个人阅读信息流
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Jaryujun</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-12-15T02:28:35.000Z" class="dt-published" itemprop="datePublished">2025-12-15</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="别再做信息的搬运工：我的个人知识体系“祛魅”与重塑"><a href="#别再做信息的搬运工：我的个人知识体系“祛魅”与重塑" class="headerlink" title="别再做信息的搬运工：我的个人知识体系“祛魅”与重塑"></a>别再做信息的搬运工：我的个人知识体系“祛魅”与重塑</h1><p>你是否也曾有过这种“生产力焦虑”？订阅了无数个 RSS 频道，收藏夹里躺着几百篇“深度好文”，手机里装满了 Obsidian、Notion 和 flomo。我们像松鼠一样疯狂屯粮，却发现自己并未因此变得睿智，反而深陷在一种被少数派作者 Cunff 称为**「生产力色情」**的幻觉中：追求那些华而不实的工具技巧，却忽略了解决问题的本质。</p>
+<p>最近，我翻阅了大量关于工作流的文章，开始反思：为什么我的“第二大脑”总是堆满杂物？我发现，<strong>真正可持续的工作流，不应是“漏斗式”的被动筛选，而应是“订单式”的输出驱动。</strong></p>
+<h2 id="1-放弃“超人规划”，接受简单演化"><a href="#1-放弃“超人规划”，接受简单演化" class="headerlink" title="1. 放弃“超人规划”，接受简单演化"></a>1. 放弃“超人规划”，接受简单演化</h2><p>以前我总想一步到位打造完美的系统，但现实给了我一记耳光。根据加尔定律（Gall’s Law），<a target="_blank" rel="noopener" href="https://cubox.pro/my/highlight?id=7400439715909865069">任何运转正常的复杂系统，最初都源于一个运转正常的简单系统</a>。</p>
+<p>我开始对自己的系统进行“祛魅”：</p>
+<ul>
+<li><strong>工具并非银弹：</strong> 卢曼的成就是终身努力的结果，而非卡片笔记法的功劳。我们要接受<a target="_blank" rel="noopener" href="https://cubox.pro/my/highlight?id=7400195195637072596">没有单一工具能满足所有需求</a>的现实。</li>
+<li><strong>重器轻用：</strong> 坚守奥卡姆剃刀原则——“如无必要，勿增实体”。如果能<a target="_blank" rel="noopener" href="https://cubox.pro/my/highlight?id=7400512771932030453">在已有系统上加工</a>，就绝不从头设计。</li>
+</ul>
+<h2 id="2-内存与硬盘：给大脑“减负”"><a href="#2-内存与硬盘：给大脑“减负”" class="headerlink" title="2. 内存与硬盘：给大脑“减负”"></a>2. 内存与硬盘：给大脑“减负”</h2><p>在 Obsidian 的实践中，最核心的隐喻是“内存与硬盘”的动态切换。</p>
+<p>我们应该把<a target="_blank" rel="noopener" href="https://cubox.pro/my/highlight?id=7400881861209097609">重要紧急或本周的任务放在“内存”中</a>，随取随用；而那些长远的、背景性的知识则存入“硬盘”。这种划分让我们能无压力地专注当下，只在必要时才进行上下文切换。这种秩序感，正是摆脱焦虑的良药。</p>
+<h2 id="3-以终为始：从“输出”倒推“输入”"><a href="#3-以终为始：从“输出”倒推“输入”" class="headerlink" title="3. 以终为始：从“输出”倒推“输入”"></a>3. 以终为始：从“输出”倒推“输入”</h2><p>这是我近期最大的认知转变。以前我的阅读是<a target="_blank" rel="noopener" href="https://cubox.pro/my/highlight?id=7400873137316824759">基于算法推荐的“喂养”</a>，它只关心我爱看什么，不关心质量。现在，我尝试建立**“订单式”阅读流**：</p>
+<ul>
+<li><strong>明确输出目标：</strong> 输出不一定是写文章，<a target="_blank" rel="noopener" href="https://cubox.pro/my/highlight?id=7400437801956674262">做出一个决策、践行一个习惯</a>也是高质量的内向性输出。</li>
+<li><strong>反向筛选输入：</strong> 当我明确了“这周要解决什么问题”时，输入端就变成了精准的猎场。通过<a target="_blank" rel="noopener" href="https://1q43.blog/post/1112">三级信息阅读 Workflow</a>，我会过滤掉 90% 的噪音。</li>
+<li><strong>构建闭环：</strong> <a target="_blank" rel="noopener" href="https://cubox.pro/my/highlight?id=7400437933573931446">高效输出的核心是减少阻力的工作流</a>。每当我读到触动点，我会问自己：这个知识能解决我订单里的哪个问题？如果不能，它就只是硬盘里的冷数据。</li>
+</ul>
+<h2 id="4-自我觉察：系统的“动态修正”"><a href="#4-自我觉察：系统的“动态修正”" class="headerlink" title="4. 自我觉察：系统的“动态修正”"></a>4. 自我觉察：系统的“动态修正”</h2><p>一个有生命力的系统必须是动态的。我开始习惯用 flomo 记录<a target="_blank" rel="noopener" href="https://sspai.com/post/77091">自我觉察笔记</a>。<br>这不仅是记录情绪，更是在观察自己的思维模式：为什么我最近收集了这么多关于某主题的文章却毫无产出？是因为定义不清晰吗？正如作者所说，<a target="_blank" rel="noopener" href="https://cubox.pro/my/highlight?id=7400195130944129756">无法清晰定义的问题很难进行有效讨论</a>。通过觉察，我不断剔除那些<a target="_blank" rel="noopener" href="https://cubox.pro/my/highlight?id=7400171291950452617">过时或被修正</a>的陈旧逻辑。</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>搭建知识体系，本质上是在构建一个<a target="_blank" rel="noopener" href="https://cubox.pro/my/highlight?id=7400171188883819323">有机的整体</a>。它不需要大而全，但一定要有极强的<strong>实践性和个性化</strong>。</p>
+<p>别再纠结于哪个工具更厉害了。去定义你的问题，去开启你的订单，让每一滴输入的“信息之水”，都能流向输出的“行动之河”。</p>
+<hr>
+<h3 id="参考与致敬"><a href="#参考与致敬" class="headerlink" title="参考与致敬"></a>参考与致敬</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://sspai.com/post/80802">《如何「构建第二大脑」，这是我的 Obsidian 实践配方》</a></li>
+<li><a target="_blank" rel="noopener" href="https://1q43.blog/post/1112">《基于 RSS 和 Notion AI 打造三级信息阅读 Workflow》</a></li>
+<li><a target="_blank" rel="noopener" href="https://sspai.com/post/78390">《「生产力祛魅」——重塑工作流》</a></li>
+<li><a target="_blank" rel="noopener" href="https://sspai.com/post/77091">《当我用 flomo 写自我觉察笔记》</a></li>
+<li><a target="_blank" rel="noopener" href="https://sspai.com/post/87028">《构建可持续发展的个人工作流》</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/RbC1qQ2DfqjEbWIDffXE5A">《如何搭建个人知识体系》</a></li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/briefing/">briefing</a></li>
+        
+          <li><a href="/projects/">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%AB%E5%86%8D%E5%81%9A%E4%BF%A1%E6%81%AF%E7%9A%84%E6%90%AC%E8%BF%90%E5%B7%A5%EF%BC%9A%E6%88%91%E7%9A%84%E4%B8%AA%E4%BA%BA%E7%9F%A5%E8%AF%86%E4%BD%93%E7%B3%BB%E2%80%9C%E7%A5%9B%E9%AD%85%E2%80%9D%E4%B8%8E%E9%87%8D%E5%A1%91"><span class="toc-number">1.</span> <span class="toc-text">别再做信息的搬运工：我的个人知识体系“祛魅”与重塑</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%94%BE%E5%BC%83%E2%80%9C%E8%B6%85%E4%BA%BA%E8%A7%84%E5%88%92%E2%80%9D%EF%BC%8C%E6%8E%A5%E5%8F%97%E7%AE%80%E5%8D%95%E6%BC%94%E5%8C%96"><span class="toc-number">1.1.</span> <span class="toc-text">1. 放弃“超人规划”，接受简单演化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%86%85%E5%AD%98%E4%B8%8E%E7%A1%AC%E7%9B%98%EF%BC%9A%E7%BB%99%E5%A4%A7%E8%84%91%E2%80%9C%E5%87%8F%E8%B4%9F%E2%80%9D"><span class="toc-number">1.2.</span> <span class="toc-text">2. 内存与硬盘：给大脑“减负”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BB%A5%E7%BB%88%E4%B8%BA%E5%A7%8B%EF%BC%9A%E4%BB%8E%E2%80%9C%E8%BE%93%E5%87%BA%E2%80%9D%E5%80%92%E6%8E%A8%E2%80%9C%E8%BE%93%E5%85%A5%E2%80%9D"><span class="toc-number">1.3.</span> <span class="toc-text">3. 以终为始：从“输出”倒推“输入”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E8%87%AA%E6%88%91%E8%A7%89%E5%AF%9F%EF%BC%9A%E7%B3%BB%E7%BB%9F%E7%9A%84%E2%80%9C%E5%8A%A8%E6%80%81%E4%BF%AE%E6%AD%A3%E2%80%9D"><span class="toc-number">1.4.</span> <span class="toc-text">4. 自我觉察：系统的“动态修正”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">1.5.</span> <span class="toc-text">结语</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E4%B8%8E%E8%87%B4%E6%95%AC"><span class="toc-number">1.5.1.</span> <span class="toc-text">参考与致敬</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://jaryujun.github.io/2025/12/15/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://jaryujun.github.io/2025/12/15/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/&text=如何构建个人阅读信息流"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://jaryujun.github.io/2025/12/15/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/&title=如何构建个人阅读信息流"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://jaryujun.github.io/2025/12/15/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/&is_video=false&description=如何构建个人阅读信息流"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=如何构建个人阅读信息流&body=Check out this article: https://jaryujun.github.io/2025/12/15/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://jaryujun.github.io/2025/12/15/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/&title=如何构建个人阅读信息流"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://jaryujun.github.io/2025/12/15/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/&title=如何构建个人阅读信息流"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://jaryujun.github.io/2025/12/15/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/&title=如何构建个人阅读信息流"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://jaryujun.github.io/2025/12/15/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/&title=如何构建个人阅读信息流"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://jaryujun.github.io/2025/12/15/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/&name=如何构建个人阅读信息流&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://jaryujun.github.io/2025/12/15/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/&t=如何构建个人阅读信息流"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Jaryujun
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/briefing/">briefing</a></li><!--
+     --><!--
+       --><li><a href="/projects/">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
