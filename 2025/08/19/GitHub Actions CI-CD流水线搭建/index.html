@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="本文将详细介绍如何为Spring Boot项目搭建一套完整的CI&#x2F;CD流水线，包括Docker容器化、GitHub Actions自动化。 流程提交代码   -&gt; GitHub Actions 执行测试与构建   -&gt; 构建并推送 Docker 镜像   -&gt; 通过 SSH 登录服务器   -&gt; docker compose 拉取新镜像并重启服务  1. Dock">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GitHub Actions CI-CD流水线搭建">
+<meta property="og:url" content="https://jaryujun.github.io/2025/08/19/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/index.html">
+<meta property="og:site_name" content="Jaryujun Blog">
+<meta property="og:description" content="本文将详细介绍如何为Spring Boot项目搭建一套完整的CI&#x2F;CD流水线，包括Docker容器化、GitHub Actions自动化。 流程提交代码   -&gt; GitHub Actions 执行测试与构建   -&gt; 构建并推送 Docker 镜像   -&gt; 通过 SSH 登录服务器   -&gt; docker compose 拉取新镜像并重启服务  1. Dock">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-08-19T05:51:50.000Z">
+<meta property="article:modified_time" content="2026-03-13T05:47:41.371Z">
+<meta property="article:author" content="Jaryujun">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="CI&#x2F;CD">
+<meta property="article:tag" content="Docker">
+<meta property="article:tag" content="GitHub Actions">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>GitHub Actions CI-CD流水线搭建</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/briefing/">Briefing</a></li><!--
+     --><!--
+       --><li><a href="/projects/">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/08/22/%E5%A4%84%E6%9A%91%EF%BC%8C%E5%A4%A9%E5%9C%B0%E5%A7%8B%E8%82%83/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/08/07/Hexo-GitHub-Pages-%E5%BF%AB%E9%80%9F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://jaryujun.github.io/2025/08/19/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://jaryujun.github.io/2025/08/19/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&text=GitHub Actions CI-CD流水线搭建"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://jaryujun.github.io/2025/08/19/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&title=GitHub Actions CI-CD流水线搭建"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://jaryujun.github.io/2025/08/19/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&is_video=false&description=GitHub Actions CI-CD流水线搭建"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=GitHub Actions CI-CD流水线搭建&body=Check out this article: https://jaryujun.github.io/2025/08/19/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://jaryujun.github.io/2025/08/19/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&title=GitHub Actions CI-CD流水线搭建"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://jaryujun.github.io/2025/08/19/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&title=GitHub Actions CI-CD流水线搭建"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://jaryujun.github.io/2025/08/19/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&title=GitHub Actions CI-CD流水线搭建"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://jaryujun.github.io/2025/08/19/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&title=GitHub Actions CI-CD流水线搭建"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://jaryujun.github.io/2025/08/19/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&name=GitHub Actions CI-CD流水线搭建&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://jaryujun.github.io/2025/08/19/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&t=GitHub Actions CI-CD流水线搭建"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Dockerfile"><span class="toc-number">2.</span> <span class="toc-text">1. Dockerfile</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-GitHub-Actions-%E5%B7%A5%E4%BD%9C%E6%B5%81"><span class="toc-number">3.</span> <span class="toc-text">2. GitHub Actions 工作流</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E9%85%8D%E7%BD%AE"><span class="toc-number">4.</span> <span class="toc-text">3. 服务器端配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-GitHub-Secrets"><span class="toc-number">5.</span> <span class="toc-text">4. GitHub Secrets</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">6.</span> <span class="toc-text">5. 使用方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E8%AF%B4%E6%98%8E"><span class="toc-number">7.</span> <span class="toc-text">安全说明</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        GitHub Actions CI-CD流水线搭建
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Jaryujun</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-08-19T05:51:50.000Z" class="dt-published" itemprop="datePublished">2025-08-19</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/CI-CD/" rel="tag">CI/CD</a>, <a class="p-category" href="/tags/Docker/" rel="tag">Docker</a>, <a class="p-category" href="/tags/GitHub-Actions/" rel="tag">GitHub Actions</a>, <a class="p-category" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>本文将详细介绍如何为Spring Boot项目搭建一套完整的CI&#x2F;CD流水线，包括Docker容器化、GitHub Actions自动化。</p>
+<h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><pre><code class="highlight text">提交代码
+  -&gt; GitHub Actions 执行测试与构建
+  -&gt; 构建并推送 Docker 镜像
+  -&gt; 通过 SSH 登录服务器
+  -&gt; docker compose 拉取新镜像并重启服务</code></pre>
+
+<h2 id="1-Dockerfile"><a href="#1-Dockerfile" class="headerlink" title="1. Dockerfile"></a>1. Dockerfile</h2><p>示例文件：<code>Dockerfile</code></p>
+<pre><code class="highlight dockerfile"><span class="keyword">FROM</span> maven:<span class="number">3.9</span>.<span class="number">9</span>-eclipse-temurin-<span class="number">17</span> AS build
+<span class="keyword">WORKDIR</span><span class="language-bash"> /app</span>
+
+<span class="keyword">COPY</span><span class="language-bash"> pom.xml .</span>
+<span class="keyword">RUN</span><span class="language-bash"> mvn -B dependency:go-offline</span>
+
+<span class="keyword">COPY</span><span class="language-bash"> src ./src</span>
+<span class="keyword">RUN</span><span class="language-bash"> mvn -B clean package -DskipTests</span>
+
+<span class="keyword">FROM</span> eclipse-temurin:<span class="number">17</span>-jre
+<span class="keyword">WORKDIR</span><span class="language-bash"> /app</span>
+
+<span class="keyword">COPY</span><span class="language-bash"> --from=build /app/target/*.jar app.jar</span>
+
+<span class="keyword">EXPOSE</span> <span class="number">8080</span>
+<span class="keyword">ENTRYPOINT</span><span class="language-bash"> [<span class="string">&quot;java&quot;</span>, <span class="string">&quot;-jar&quot;</span>, <span class="string">&quot;app.jar&quot;</span>]</span></code></pre>
+
+<p>如果项目不是单模块结构，把 <code>COPY</code> 路径替换成你自己的目录即可。</p>
+<h2 id="2-GitHub-Actions-工作流"><a href="#2-GitHub-Actions-工作流" class="headerlink" title="2. GitHub Actions 工作流"></a>2. GitHub Actions 工作流</h2><p>示例文件：<code>.github/workflows/ci-cd.yml</code></p>
+<pre><code class="highlight yaml"><span class="attr">name:</span> <span class="string">CI/CD</span>
+
+<span class="attr">on:</span>
+  <span class="attr">push:</span>
+    <span class="attr">branches:</span> [<span class="string">main</span>]
+  <span class="attr">pull_request:</span>
+    <span class="attr">branches:</span> [<span class="string">main</span>]
+
+<span class="attr">env:</span>
+  <span class="attr">REGISTRY:</span> <span class="string">ghcr.io</span>
+  <span class="attr">IMAGE_NAME:</span> <span class="string">$&#123;&#123;</span> <span class="string">github.repository</span> <span class="string">&#125;&#125;</span>
+
+<span class="attr">jobs:</span>
+  <span class="attr">test-and-build:</span>
+    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span>
+    <span class="attr">steps:</span>
+      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Checkout</span>
+        <span class="attr">uses:</span> <span class="string">actions/checkout@v4</span>
+
+      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Set</span> <span class="string">up</span> <span class="string">JDK</span> <span class="number">17</span>
+        <span class="attr">uses:</span> <span class="string">actions/setup-java@v4</span>
+        <span class="attr">with:</span>
+          <span class="attr">java-version:</span> <span class="string">&#x27;17&#x27;</span>
+          <span class="attr">distribution:</span> <span class="string">temurin</span>
+
+      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Cache</span> <span class="string">Maven</span>
+        <span class="attr">uses:</span> <span class="string">actions/cache@v4</span>
+        <span class="attr">with:</span>
+          <span class="attr">path:</span> <span class="string">~/.m2/repository</span>
+          <span class="attr">key:</span> <span class="string">$&#123;&#123;</span> <span class="string">runner.os</span> <span class="string">&#125;&#125;-maven-$&#123;&#123;</span> <span class="string">hashFiles(&#x27;**/pom.xml&#x27;)</span> <span class="string">&#125;&#125;</span>
+          <span class="attr">restore-keys:</span> <span class="string">|</span>
+<span class="string">            $&#123;&#123; runner.os &#125;&#125;-maven-</span>
+<span class="string"></span>
+      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Test</span>
+        <span class="attr">run:</span> <span class="string">mvn</span> <span class="string">-B</span> <span class="string">test</span>
+
+      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Package</span>
+        <span class="attr">run:</span> <span class="string">mvn</span> <span class="string">-B</span> <span class="string">clean</span> <span class="string">package</span> <span class="string">-DskipTests</span>
+
+  <span class="attr">docker:</span>
+    <span class="attr">if:</span> <span class="string">github.ref</span> <span class="string">==</span> <span class="string">&#x27;refs/heads/main&#x27;</span>
+    <span class="attr">needs:</span> <span class="string">test-and-build</span>
+    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span>
+    <span class="attr">permissions:</span>
+      <span class="attr">contents:</span> <span class="string">read</span>
+      <span class="attr">packages:</span> <span class="string">write</span>
+    <span class="attr">steps:</span>
+      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Checkout</span>
+        <span class="attr">uses:</span> <span class="string">actions/checkout@v4</span>
+
+      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Set</span> <span class="string">up</span> <span class="string">Buildx</span>
+        <span class="attr">uses:</span> <span class="string">docker/setup-buildx-action@v3</span>
+
+      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Login</span> <span class="string">GHCR</span>
+        <span class="attr">uses:</span> <span class="string">docker/login-action@v3</span>
+        <span class="attr">with:</span>
+          <span class="attr">registry:</span> <span class="string">$&#123;&#123;</span> <span class="string">env.REGISTRY</span> <span class="string">&#125;&#125;</span>
+          <span class="attr">username:</span> <span class="string">$&#123;&#123;</span> <span class="string">github.actor</span> <span class="string">&#125;&#125;</span>
+          <span class="attr">password:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.GITHUB_TOKEN</span> <span class="string">&#125;&#125;</span>
+
+      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Build</span> <span class="string">and</span> <span class="string">push</span>
+        <span class="attr">uses:</span> <span class="string">docker/build-push-action@v6</span>
+        <span class="attr">with:</span>
+          <span class="attr">context:</span> <span class="string">.</span>
+          <span class="attr">push:</span> <span class="literal">true</span>
+          <span class="attr">tags:</span> <span class="string">$&#123;&#123;</span> <span class="string">env.REGISTRY</span> <span class="string">&#125;&#125;/$&#123;&#123;</span> <span class="string">env.IMAGE_NAME</span> <span class="string">&#125;&#125;:latest</span>
+
+  <span class="attr">deploy:</span>
+    <span class="attr">if:</span> <span class="string">github.ref</span> <span class="string">==</span> <span class="string">&#x27;refs/heads/main&#x27;</span>
+    <span class="attr">needs:</span> <span class="string">docker</span>
+    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span>
+    <span class="attr">steps:</span>
+      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Deploy</span>
+        <span class="attr">uses:</span> <span class="string">appleboy/ssh-action@v1.2.0</span>
+        <span class="attr">with:</span>
+          <span class="attr">host:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.DEPLOY_HOST</span> <span class="string">&#125;&#125;</span>
+          <span class="attr">username:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.DEPLOY_USER</span> <span class="string">&#125;&#125;</span>
+          <span class="attr">key:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.DEPLOY_SSH_KEY</span> <span class="string">&#125;&#125;</span>
+          <span class="attr">script:</span> <span class="string">|</span>
+<span class="string">            cd /opt/app</span>
+<span class="string">            docker compose pull</span>
+<span class="string">            docker compose up -d</span></code></pre>
+
+<h2 id="3-服务器端配置"><a href="#3-服务器端配置" class="headerlink" title="3. 服务器端配置"></a>3. 服务器端配置</h2><p>示例文件：<code>docker-compose.yml</code></p>
+<pre><code class="highlight yaml"><span class="attr">services:</span>
+  <span class="attr">app:</span>
+    <span class="attr">image:</span> <span class="string">ghcr.io/&lt;your-org&gt;/&lt;your-repo&gt;:latest</span>
+    <span class="attr">container_name:</span> <span class="string">app</span>
+    <span class="attr">restart:</span> <span class="string">unless-stopped</span>
+    <span class="attr">ports:</span>
+      <span class="bullet">-</span> <span class="string">&quot;8080:8080&quot;</span>
+    <span class="attr">env_file:</span>
+      <span class="bullet">-</span> <span class="string">.env</span></code></pre>
+
+<p>示例文件：<code>.env</code></p>
+<pre><code class="highlight bash">SPRING_PROFILES_ACTIVE=prod
+SPRING_DATASOURCE_URL=&lt;your-database-url&gt;
+SPRING_DATASOURCE_USERNAME=&lt;your-database-username&gt;
+SPRING_DATASOURCE_PASSWORD=&lt;your-database-password&gt;
+JWT_SECRET=&lt;your-jwt-secret&gt;</code></pre>
+
+<p><code>.env</code> 不应提交到仓库。</p>
+<h2 id="4-GitHub-Secrets"><a href="#4-GitHub-Secrets" class="headerlink" title="4. GitHub Secrets"></a>4. GitHub Secrets</h2><p>至少需要这些 Secrets：</p>
+<ul>
+<li><code>DEPLOY_HOST</code></li>
+<li><code>DEPLOY_USER</code></li>
+<li><code>DEPLOY_SSH_KEY</code></li>
+</ul>
+<p>如果镜像仓库或应用还需要其他凭证，也统一放到 Secrets 或服务器 <code>.env</code> 中，不要写进文章或仓库源码。</p>
+<h2 id="5-使用方式"><a href="#5-使用方式" class="headerlink" title="5. 使用方式"></a>5. 使用方式</h2><p>首次在服务器准备好 <code>docker-compose.yml</code> 和 <code>.env</code> 后，后续只需要向 <code>main</code> 分支推送代码：</p>
+<pre><code class="highlight bash">git add .
+git commit -m <span class="string">&quot;chore: update app&quot;</span>
+git push origin main</code></pre>
+
+<p>流水线会自动执行测试、构建镜像并部署。</p>
+<h2 id="安全说明"><a href="#安全说明" class="headerlink" title="安全说明"></a>安全说明</h2><ul>
+<li>本文所有主机名、路径、仓库名、变量值均为占位符。</li>
+<li>不要在工作流、<code>docker-compose.yml</code>、文章示例里写死真实密码或密钥。</li>
+<li>优先使用 SSH 私钥，不使用明文密码登录服务器。</li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/briefing/">Briefing</a></li>
+        
+          <li><a href="/projects/">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Dockerfile"><span class="toc-number">2.</span> <span class="toc-text">1. Dockerfile</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-GitHub-Actions-%E5%B7%A5%E4%BD%9C%E6%B5%81"><span class="toc-number">3.</span> <span class="toc-text">2. GitHub Actions 工作流</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E9%85%8D%E7%BD%AE"><span class="toc-number">4.</span> <span class="toc-text">3. 服务器端配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-GitHub-Secrets"><span class="toc-number">5.</span> <span class="toc-text">4. GitHub Secrets</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">6.</span> <span class="toc-text">5. 使用方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E8%AF%B4%E6%98%8E"><span class="toc-number">7.</span> <span class="toc-text">安全说明</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://jaryujun.github.io/2025/08/19/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://jaryujun.github.io/2025/08/19/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&text=GitHub Actions CI-CD流水线搭建"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://jaryujun.github.io/2025/08/19/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&title=GitHub Actions CI-CD流水线搭建"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://jaryujun.github.io/2025/08/19/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&is_video=false&description=GitHub Actions CI-CD流水线搭建"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=GitHub Actions CI-CD流水线搭建&body=Check out this article: https://jaryujun.github.io/2025/08/19/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://jaryujun.github.io/2025/08/19/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&title=GitHub Actions CI-CD流水线搭建"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://jaryujun.github.io/2025/08/19/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&title=GitHub Actions CI-CD流水线搭建"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://jaryujun.github.io/2025/08/19/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&title=GitHub Actions CI-CD流水线搭建"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://jaryujun.github.io/2025/08/19/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&title=GitHub Actions CI-CD流水线搭建"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://jaryujun.github.io/2025/08/19/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&name=GitHub Actions CI-CD流水线搭建&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://jaryujun.github.io/2025/08/19/GitHub%20Actions%20CI-CD%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%90%AD%E5%BB%BA/&t=GitHub Actions CI-CD流水线搭建"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Jaryujun
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/briefing/">Briefing</a></li><!--
+     --><!--
+       --><li><a href="/projects/">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
