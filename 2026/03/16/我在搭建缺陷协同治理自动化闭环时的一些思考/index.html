@@ -14,7 +14,7 @@
 <meta property="og:description" content="最近在想一件事：能不能把运营、研发、测试、运维之间那条很长的协作链，尽量收敛成一条自动化链路。 这篇先不聊太细的实现，只记录思路和当前进展。 目前我已经实践到运营侧 -&gt; 研发侧，研发侧的自动化还在继续推进。后面的测试、发布、通知闭环，也都还在设计和实践中，后续有进展再更新。 为什么要做这件事很多团队的问题，不是没人做事，而是信息总在路上损耗。  运营从企业微信里接收问题，但问题描述往往不完">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2026-03-16T11:20:01.000Z">
-<meta property="article:modified_time" content="2026-03-13T07:22:49.108Z">
+<meta property="article:modified_time" content="2026-03-13T07:37:35.574Z">
 <meta property="article:author" content="Jaryujun">
 <meta property="article:tag" content="云效">
 <meta property="article:tag" content="企业微信">
@@ -218,23 +218,7 @@
 <p>因为很多时候，真正浪费时间的不是编码，而是编码前那段模糊地带。谁都知道有问题，但没人先把问题讲清楚，也没人先把修改路径收敛出来。</p>
 <p>如果这一步能被自动化托住，后面的开发、测试、发布才有机会更顺。</p>
 <h2 id="我想要的完整闭环"><a href="#我想要的完整闭环" class="headerlink" title="我想要的完整闭环"></a>我想要的完整闭环</h2><p>虽然现在只实践到前半段，但我想要的目标状态，大概是这样：</p>
-<pre><code class="highlight mermaid">flowchart LR
-    operationFeedback[运营反馈] --&gt; wecom[企业微信]
-    wecom --&gt; opsAnalysis[问题分析与初诊]
-    opsAnalysis --&gt; yxBug[云效缺陷]
-    yxBug --&gt; devPlan[自动生成开发计划]
-    devPlan --&gt; manualReview[人工审核计划]
-    manualReview --&gt; devList[开发列表]
-    devList --&gt; ciChecks[扫码单测评审构建]
-    ciChecks --&gt; testEnv[测试环境]
-    testEnv --&gt; testerVerify[测试人工验证]
-    testerVerify --&gt; releaseQueue[发布队列]
-    releaseQueue --&gt; cicdRelease[CICD发布]
-    cicdRelease --&gt; versionRecord[版本记录与日志]
-    versionRecord --&gt; releaseHook[云效发布Hook]
-    releaseHook --&gt; wecomBot[企业微信Bot通知]
-    wecomBot --&gt; operationConfirm[运营反馈确认]</code></pre>
-
+<p><code>运营反馈</code><br>→ <code>企业微信</code><br>→ <code>问题分析与初诊</code><br>→ <code>云效缺陷</code><br>→ <code>自动生成开发计划</code><br>→ <code>人工审核计划</code><br>→ <code>开发列表</code><br>→ <code>代码扫描 / 单元测试 / 代码评审 / 构建测试环境</code><br>→ <code>测试人工验证</code><br>→ <code>发布队列</code><br>→ <code>CICD 发布</code><br>→ <code>版本记录与变更日志</code><br>→ <code>云效发布 Hook</code><br>→ <code>企业微信 Bot 通知</code><br>→ <code>运营反馈确认</code></p>
 <p>后半段我希望逐步补上这些能力：</p>
 <h3 id="1-开发执行自动衔接"><a href="#1-开发执行自动衔接" class="headerlink" title="1. 开发执行自动衔接"></a>1. 开发执行自动衔接</h3><p>人工确认计划后，补充测试用例，进入开发列表。</p>
 <p>任务完成后，自动触发：</p>
