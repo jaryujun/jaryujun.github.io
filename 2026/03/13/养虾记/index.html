@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="最近开始认真“养虾”。 这里的“虾”，指的是 OpenClaw。它本质上是一个运行在自己机器上的个人 AI 助手，能接聊天工具、调用技能、访问系统，还能长期保留上下文。OpenClaw 官网 这篇文章只记录我自己的一套最小实践：  用官方脚本把 OpenClaw 装起来 把消息入口接到企业微信 先养成几个稳定的小能力 装 Skill 做代码分析 做 Web Search  一、先装起来安装方式我改">
+<meta property="og:type" content="article">
+<meta property="og:title" content="养虾记">
+<meta property="og:url" content="https://jaryujun.github.io/2026/03/13/%E5%85%BB%E8%99%BE%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Jaryujun Blog">
+<meta property="og:description" content="最近开始认真“养虾”。 这里的“虾”，指的是 OpenClaw。它本质上是一个运行在自己机器上的个人 AI 助手，能接聊天工具、调用技能、访问系统，还能长期保留上下文。OpenClaw 官网 这篇文章只记录我自己的一套最小实践：  用官方脚本把 OpenClaw 装起来 把消息入口接到企业微信 先养成几个稳定的小能力 装 Skill 做代码分析 做 Web Search  一、先装起来安装方式我改">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-03-13T13:18:00.000Z">
+<meta property="article:modified_time" content="2026-03-13T07:20:43.107Z">
+<meta property="article:author" content="Jaryujun">
+<meta property="article:tag" content="AI Agent">
+<meta property="article:tag" content="OpenClaw">
+<meta property="article:tag" content="Skill">
+<meta property="article:tag" content="企业微信">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>养虾记</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/briefing/">Briefing</a></li><!--
+     --><!--
+       --><li><a href="/projects/">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2026/03/16/%E6%88%91%E5%9C%A8%E6%90%AD%E5%BB%BA%E7%BC%BA%E9%99%B7%E5%8D%8F%E5%90%8C%E6%B2%BB%E7%90%86%E8%87%AA%E5%8A%A8%E5%8C%96%E9%97%AD%E7%8E%AF%E6%97%B6%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%9D%E8%80%83/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2026/02/03/%E9%87%8D%E5%A1%91%E9%98%85%E8%AF%BB%E5%B7%A5%E4%BD%9C%E6%B5%81/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://jaryujun.github.io/2026/03/13/%E5%85%BB%E8%99%BE%E8%AE%B0/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://jaryujun.github.io/2026/03/13/%E5%85%BB%E8%99%BE%E8%AE%B0/&text=养虾记"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://jaryujun.github.io/2026/03/13/%E5%85%BB%E8%99%BE%E8%AE%B0/&title=养虾记"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://jaryujun.github.io/2026/03/13/%E5%85%BB%E8%99%BE%E8%AE%B0/&is_video=false&description=养虾记"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=养虾记&body=Check out this article: https://jaryujun.github.io/2026/03/13/%E5%85%BB%E8%99%BE%E8%AE%B0/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://jaryujun.github.io/2026/03/13/%E5%85%BB%E8%99%BE%E8%AE%B0/&title=养虾记"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://jaryujun.github.io/2026/03/13/%E5%85%BB%E8%99%BE%E8%AE%B0/&title=养虾记"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://jaryujun.github.io/2026/03/13/%E5%85%BB%E8%99%BE%E8%AE%B0/&title=养虾记"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://jaryujun.github.io/2026/03/13/%E5%85%BB%E8%99%BE%E8%AE%B0/&title=养虾记"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://jaryujun.github.io/2026/03/13/%E5%85%BB%E8%99%BE%E8%AE%B0/&name=养虾记&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://jaryujun.github.io/2026/03/13/%E5%85%BB%E8%99%BE%E8%AE%B0/&t=养虾记"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%85%88%E8%A3%85%E8%B5%B7%E6%9D%A5"><span class="toc-number">1.</span> <span class="toc-text">一、先装起来</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%8E%A5%E5%85%A5%E9%98%BF%E9%87%8C%E4%BA%91-Coding-Plan"><span class="toc-number">2.</span> <span class="toc-text">二、接入阿里云 Coding Plan</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E6%8E%A5%E5%85%A5%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1"><span class="toc-number">3.</span> <span class="toc-text">三、接入企业微信</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E8%99%BE%E6%80%8E%E4%B9%88%E5%85%BB"><span class="toc-number">4.</span> <span class="toc-text">四、虾怎么养</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%AE%89%E8%A3%85-Skill"><span class="toc-number">5.</span> <span class="toc-text">五、安装 Skill</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%AE%9E%E7%8E%B0%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">6.</span> <span class="toc-text">六、实现代码分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E5%AE%9E%E7%8E%B0-Web-Search"><span class="toc-number">7.</span> <span class="toc-text">七、实现 Web Search</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E7%8E%B0%E5%9C%A8%E8%BF%99%E5%8F%AA%E8%99%BE%E8%83%BD%E5%B9%B2%E4%BB%80%E4%B9%88"><span class="toc-number">8.</span> <span class="toc-text">八、现在这只虾能干什么</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="toc-number">8.1.</span> <span class="toc-text">参考链接</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        养虾记
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Jaryujun</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2026-03-13T13:18:00.000Z" class="dt-published" itemprop="datePublished">2026-03-13</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/AI-Agent/" rel="tag">AI Agent</a>, <a class="p-category" href="/tags/OpenClaw/" rel="tag">OpenClaw</a>, <a class="p-category" href="/tags/Skill/" rel="tag">Skill</a>, <a class="p-category" href="/tags/%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1/" rel="tag">企业微信</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>最近开始认真“养虾”。</p>
+<p>这里的“虾”，指的是 OpenClaw。它本质上是一个运行在自己机器上的个人 AI 助手，能接聊天工具、调用技能、访问系统，还能长期保留上下文。<a target="_blank" rel="noopener" href="https://openclaw.ai/">OpenClaw 官网</a></p>
+<p>这篇文章只记录我自己的一套最小实践：</p>
+<ol>
+<li>用官方脚本把 OpenClaw 装起来</li>
+<li>把消息入口接到企业微信</li>
+<li>先养成几个稳定的小能力</li>
+<li>装 Skill</li>
+<li>做代码分析</li>
+<li>做 Web Search</li>
+</ol>
+<h2 id="一、先装起来"><a href="#一、先装起来" class="headerlink" title="一、先装起来"></a>一、先装起来</h2><p>安装方式我改成了官方脚本，尽量少折腾。</p>
+<p>macOS：</p>
+<pre><code class="highlight bash">curl -fsSL https://openclaw.ai/install.sh | bash</code></pre>
+
+<p>装完后先初始化：</p>
+<pre><code class="highlight bash">openclaw onboard</code></pre>
+
+<p>我只关心三件事：</p>
+<ol>
+<li>能不能正常完成 <code>onboard</code></li>
+<li>能不能启动 TUI 或 Dashboard</li>
+<li>日志里有没有模型鉴权或渠道报错</li>
+</ol>
+<p>如果只给一个建议，就是先别急着装一堆渠道和 Skill，先把单机跑通。<a target="_blank" rel="noopener" href="https://openclaw.ai/">OpenClaw 官网</a></p>
+<h2 id="二、接入阿里云-Coding-Plan"><a href="#二、接入阿里云-Coding-Plan" class="headerlink" title="二、接入阿里云 Coding Plan"></a>二、接入阿里云 Coding Plan</h2><p>这部分我参考的是阿里云的 OpenClaw 接入文档：<a target="_blank" rel="noopener" href="https://help.aliyun.com/zh/model-studio/openclaw-coding-plan?spm=a2c4g.11186623.0.0.2170689dL52OeS">阿里云 Coding Plan 文档</a>。</p>
+<p>我用的是阿里云 <code>Coding Plan API KEY</code>，配置方式按文档走，直接改 <code>~/.openclaw/openclaw.json</code>，核心思路就是：</p>
+<ol>
+<li>新增 <code>bailian</code> provider</li>
+<li><code>baseUrl</code> 指向 <code>https://coding.dashscope.aliyuncs.com/v1</code></li>
+<li><code>apiKey</code> 使用自己的 Coding Plan Key</li>
+<li>在默认模型里挂上自己常用的模型</li>
+</ol>
+<p>文档中提供了配置 <strong>RAW</strong>：</p>
+<pre><code class="highlight json"><span class="punctuation">&#123;</span>
+  <span class="attr">&quot;models&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span>
+    <span class="attr">&quot;mode&quot;</span><span class="punctuation">:</span> <span class="string">&quot;merge&quot;</span><span class="punctuation">,</span>
+    <span class="attr">&quot;providers&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span>
+      <span class="attr">&quot;bailian&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span>
+        <span class="attr">&quot;baseUrl&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://coding.dashscope.aliyuncs.com/v1&quot;</span><span class="punctuation">,</span>
+        <span class="attr">&quot;apiKey&quot;</span><span class="punctuation">:</span> <span class="string">&quot;YOUR_API_KEY&quot;</span><span class="punctuation">,</span>
+        <span class="attr">&quot;api&quot;</span><span class="punctuation">:</span> <span class="string">&quot;openai-completions&quot;</span><span class="punctuation">,</span>
+        <span class="attr">&quot;models&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span>
+          <span class="punctuation">&#123;</span>
+            <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;qwen3.5-plus&quot;</span><span class="punctuation">,</span>
+            <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;qwen3.5-plus&quot;</span><span class="punctuation">,</span>
+            <span class="attr">&quot;reasoning&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span>
+            <span class="attr">&quot;input&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;text&quot;</span><span class="punctuation">,</span> <span class="string">&quot;image&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span>
+            <span class="attr">&quot;cost&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="attr">&quot;input&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span> <span class="attr">&quot;output&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span> <span class="attr">&quot;cacheRead&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span> <span class="attr">&quot;cacheWrite&quot;</span><span class="punctuation">:</span> <span class="number">0</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span>
+            <span class="attr">&quot;contextWindow&quot;</span><span class="punctuation">:</span> <span class="number">1000000</span><span class="punctuation">,</span>
+            <span class="attr">&quot;maxTokens&quot;</span><span class="punctuation">:</span> <span class="number">65536</span><span class="punctuation">,</span>
+            <span class="attr">&quot;compat&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="attr">&quot;thinkingFormat&quot;</span><span class="punctuation">:</span> <span class="string">&quot;qwen&quot;</span> <span class="punctuation">&#125;</span>
+          <span class="punctuation">&#125;</span><span class="punctuation">,</span>
+          <span class="punctuation">&#123;</span>
+            <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;MiniMax-M2.5&quot;</span><span class="punctuation">,</span>
+            <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;MiniMax-M2.5&quot;</span><span class="punctuation">,</span>
+            <span class="attr">&quot;reasoning&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span>
+            <span class="attr">&quot;input&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;text&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span>
+            <span class="attr">&quot;cost&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="attr">&quot;input&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span> <span class="attr">&quot;output&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span> <span class="attr">&quot;cacheRead&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span> <span class="attr">&quot;cacheWrite&quot;</span><span class="punctuation">:</span> <span class="number">0</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span>
+            <span class="attr">&quot;contextWindow&quot;</span><span class="punctuation">:</span> <span class="number">196608</span><span class="punctuation">,</span>
+            <span class="attr">&quot;maxTokens&quot;</span><span class="punctuation">:</span> <span class="number">32768</span>
+          <span class="punctuation">&#125;</span>
+        <span class="punctuation">]</span>
+      <span class="punctuation">&#125;</span>
+    <span class="punctuation">&#125;</span>
+  <span class="punctuation">&#125;</span><span class="punctuation">,</span>
+  <span class="attr">&quot;agents&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span>
+    <span class="attr">&quot;defaults&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span>
+      <span class="attr">&quot;model&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span>
+        <span class="attr">&quot;primary&quot;</span><span class="punctuation">:</span> <span class="string">&quot;bailian/MiniMax-M2.5&quot;</span>
+      <span class="punctuation">&#125;</span><span class="punctuation">,</span>
+      <span class="attr">&quot;models&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span>
+        <span class="attr">&quot;bailian/qwen3.5-plus&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span>
+        <span class="attr">&quot;bailian/MiniMax-M2.5&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="punctuation">&#125;</span>
+      <span class="punctuation">&#125;</span>
+    <span class="punctuation">&#125;</span>
+  <span class="punctuation">&#125;</span><span class="punctuation">,</span>
+  <span class="attr">&quot;gateway&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span>
+    <span class="attr">&quot;mode&quot;</span><span class="punctuation">:</span> <span class="string">&quot;local&quot;</span>
+  <span class="punctuation">&#125;</span>
+<span class="punctuation">&#125;</span></code></pre>
+
+<p>改完后重启：</p>
+<pre><code class="highlight bash">openclaw gateway restart</code></pre>
+
+<p>我目前默认偏好 <code>MiniMax-M2.5</code>。不是说它绝对最好，而是我现在这套“养虾”流程里，它的响应速度和日常可用性比较平衡。复杂任务我再切别的模型。</p>
+<h2 id="三、接入企业微信"><a href="#三、接入企业微信" class="headerlink" title="三、接入企业微信"></a>三、接入企业微信</h2><p>企业微信这块，我主要参考官方帮助中心里的智能机器人文档：<a target="_blank" rel="noopener" href="https://open.work.weixin.qq.com/help2/pc/cat?doc_id=21657&invite_source=19&invite_channel=6&invite_olduser=1&inviter_identity=2&platform=win&version=5.0.6.6028&vid=1688856810679622&logintype=none">企业微信智能机器人帮助</a>。</p>
+<p>这一块核心就四步：</p>
+<ol>
+<li>安装企业微信插件</li>
+<li>配置企业微信 <code>channel</code></li>
+<li>填入机器人 <code>Bot ID</code> 和 <code>Secret</code></li>
+<li>完成 <code>pairing</code>，密钥配对成功后即可使用</li>
+</ol>
+<p>我自己的理解里，这一段不需要讲太复杂，重点就是把通道先配通。</p>
+<p>配置时我只保留占位符：</p>
+<pre><code class="highlight bash">WECOM_BOT_ID=&lt;YOUR_BOT_ID&gt;
+WECOM_SECRET=&lt;YOUR_SECRET&gt;</code></pre>
+
+<p>如果用配置文件表达，核心意思也是一样：</p>
+<pre><code class="highlight json"><span class="punctuation">&#123;</span>
+  <span class="attr">&quot;channels&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span>
+    <span class="attr">&quot;wecom&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span>
+      <span class="attr">&quot;enabled&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span>
+      <span class="attr">&quot;botId&quot;</span><span class="punctuation">:</span> <span class="string">&quot;YOUR_BOT_ID&quot;</span><span class="punctuation">,</span>
+      <span class="attr">&quot;secret&quot;</span><span class="punctuation">:</span> <span class="string">&quot;YOUR_SECRET&quot;</span>
+    <span class="punctuation">&#125;</span>
+  <span class="punctuation">&#125;</span>
+<span class="punctuation">&#125;</span></code></pre>
+
+<p>等 <code>pairing</code> 完成后，就可以直接在企业微信里和这只虾对话了。</p>
+<p>这一节我只保留两个提醒：</p>
+<ol>
+<li>不要把真实的 <code>Bot ID</code> 和 <code>Secret</code> 提交到仓库</li>
+<li>先完成 pairing，再测试收发消息</li>
+</ol>
+<h2 id="四、虾怎么养"><a href="#四、虾怎么养" class="headerlink" title="四、虾怎么养"></a>四、虾怎么养</h2><p>我现在的经验是，OpenClaw 不是装完就结束，而是要慢慢养。</p>
+<p>我只让它先做三类小事：</p>
+<ol>
+<li>代码问题初筛</li>
+<li>资料搜索与整理</li>
+<li>把需求拆成计划</li>
+</ol>
+<p>这样有两个好处：</p>
+<ol>
+<li>它容易先变得稳定</li>
+<li>我能快速看出是模型问题、提示词问题，还是 Skill 问题</li>
+</ol>
+<p>平时我主要盯三样东西：</p>
+<ol>
+<li>渠道日志</li>
+<li>模型返回</li>
+<li>Skill 执行结果</li>
+</ol>
+<p>另外我会明确告诉它：不确定时先列假设，不要直接执行危险动作。</p>
+<h2 id="五、安装-Skill"><a href="#五、安装-Skill" class="headerlink" title="五、安装 Skill"></a>五、安装 Skill</h2><p>我对 Skill 的理解很朴素，它就是可复用能力包。</p>
+<p>我现在只先装两类：</p>
+<ol>
+<li><code>web-search</code></li>
+<li><code>code-analysis</code></li>
+</ol>
+<p>顺序也基本就是这个顺序。先保证结果能发回来，再让它会搜，最后再让它看代码。</p>
+<p>Skill 边界也要分清：</p>
+<ol>
+<li><code>web-search</code> 只负责联网搜索和整理来源</li>
+<li><code>code-analysis</code> 只负责看代码和输出分析</li>
+</ol>
+<p>Skill 一多最怕互相抢活，所以边界越清楚越稳。</p>
+<h2 id="六、实现代码分析"><a href="#六、实现代码分析" class="headerlink" title="六、实现代码分析"></a>六、实现代码分析</h2><p>代码分析是我最先补的一项能力，因为它非常适合 Agent。</p>
+<p>我的流程很简单：</p>
+<ol>
+<li>让 <code>code-analysis</code> 先读仓库</li>
+<li>复杂需求再结合阿里云 <code>Coding Plan API KEY</code></li>
+<li>输出结构化分析结果</li>
+</ol>
+<p>我希望它最终输出这种格式：</p>
+<pre><code class="highlight markdown"><span class="section">## 问题理解</span>
+<span class="bullet">-</span> 需求是什么
+
+<span class="section">## 关键文件</span>
+<span class="bullet">-</span> 哪些文件最相关
+
+<span class="section">## 调用链</span>
+<span class="bullet">-</span> 从哪进，到哪落
+
+<span class="section">## 风险点</span>
+<span class="bullet">-</span> 哪些地方容易改坏
+
+<span class="section">## 建议动作</span>
+<span class="bullet">-</span> 先改什么，再验什么</code></pre>
+
+<p>这样我能很快判断它是真的看懂了，还是只是“看起来懂了”。</p>
+<h2 id="七、实现-Web-Search"><a href="#七、实现-Web-Search" class="headerlink" title="七、实现 Web Search"></a>七、实现 Web Search</h2><p>Web Search 解决的是“缺最新信息”的问题。</p>
+<p>我现在主要用它做四件事：</p>
+<ol>
+<li>查官方文档</li>
+<li>查接入方式</li>
+<li>查报错变化</li>
+<li>汇总外部资料</li>
+</ol>
+<p>工作流也尽量简单：</p>
+<pre><code class="highlight text">用户提问
+  -&gt; 判断是否需要联网
+  -&gt; 优先搜索官方来源
+  -&gt; 摘要
+  -&gt; 返回结论和引用链接</code></pre>
+
+<p>我给它加了一条硬规则：优先引用官方文档和帮助中心；如果引用社区文章，必须标注“非官方”。</p>
+<p>这一步很重要，否则它很容易把“像真的”说成“真的”。</p>
+<h2 id="八、现在这只虾能干什么"><a href="#八、现在这只虾能干什么" class="headerlink" title="八、现在这只虾能干什么"></a>八、现在这只虾能干什么</h2><p>折腾到现在，我的目标不是让它无所不能，而是让它稳定地帮我做几件事：</p>
+<ol>
+<li>在企业微信里收消息</li>
+<li>用 <code>MiniMax-M2.5</code> 作为默认模型跑日常任务</li>
+<li>用 Skill 拆出通知、代码分析和搜索能力</li>
+<li>在需要时结合阿里云 Coding Plan 做更复杂的规划</li>
+</ol>
+<p>这套东西还远没到“完美”，但已经从“能跑”变成了“能用”。</p>
+<hr>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://openclaw.ai/">OpenClaw 官网</a></li>
+<li><a target="_blank" rel="noopener" href="https://open.work.weixin.qq.com/help2/pc/cat?doc_id=21657&invite_source=19&invite_channel=6&invite_olduser=1&inviter_identity=2&platform=win&version=5.0.6.6028&vid=1688856810679622&logintype=none">企业微信智能机器人帮助</a></li>
+<li><a target="_blank" rel="noopener" href="https://help.aliyun.com/zh/model-studio/openclaw-coding-plan?spm=a2c4g.11186623.0.0.2170689dL52OeS">阿里云 Coding Plan 文档</a></li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/briefing/">Briefing</a></li>
+        
+          <li><a href="/projects/">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%85%88%E8%A3%85%E8%B5%B7%E6%9D%A5"><span class="toc-number">1.</span> <span class="toc-text">一、先装起来</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%8E%A5%E5%85%A5%E9%98%BF%E9%87%8C%E4%BA%91-Coding-Plan"><span class="toc-number">2.</span> <span class="toc-text">二、接入阿里云 Coding Plan</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E6%8E%A5%E5%85%A5%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1"><span class="toc-number">3.</span> <span class="toc-text">三、接入企业微信</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E8%99%BE%E6%80%8E%E4%B9%88%E5%85%BB"><span class="toc-number">4.</span> <span class="toc-text">四、虾怎么养</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%AE%89%E8%A3%85-Skill"><span class="toc-number">5.</span> <span class="toc-text">五、安装 Skill</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%AE%9E%E7%8E%B0%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">6.</span> <span class="toc-text">六、实现代码分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E5%AE%9E%E7%8E%B0-Web-Search"><span class="toc-number">7.</span> <span class="toc-text">七、实现 Web Search</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E7%8E%B0%E5%9C%A8%E8%BF%99%E5%8F%AA%E8%99%BE%E8%83%BD%E5%B9%B2%E4%BB%80%E4%B9%88"><span class="toc-number">8.</span> <span class="toc-text">八、现在这只虾能干什么</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="toc-number">8.1.</span> <span class="toc-text">参考链接</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://jaryujun.github.io/2026/03/13/%E5%85%BB%E8%99%BE%E8%AE%B0/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://jaryujun.github.io/2026/03/13/%E5%85%BB%E8%99%BE%E8%AE%B0/&text=养虾记"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://jaryujun.github.io/2026/03/13/%E5%85%BB%E8%99%BE%E8%AE%B0/&title=养虾记"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://jaryujun.github.io/2026/03/13/%E5%85%BB%E8%99%BE%E8%AE%B0/&is_video=false&description=养虾记"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=养虾记&body=Check out this article: https://jaryujun.github.io/2026/03/13/%E5%85%BB%E8%99%BE%E8%AE%B0/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://jaryujun.github.io/2026/03/13/%E5%85%BB%E8%99%BE%E8%AE%B0/&title=养虾记"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://jaryujun.github.io/2026/03/13/%E5%85%BB%E8%99%BE%E8%AE%B0/&title=养虾记"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://jaryujun.github.io/2026/03/13/%E5%85%BB%E8%99%BE%E8%AE%B0/&title=养虾记"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://jaryujun.github.io/2026/03/13/%E5%85%BB%E8%99%BE%E8%AE%B0/&title=养虾记"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://jaryujun.github.io/2026/03/13/%E5%85%BB%E8%99%BE%E8%AE%B0/&name=养虾记&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://jaryujun.github.io/2026/03/13/%E5%85%BB%E8%99%BE%E8%AE%B0/&t=养虾记"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Jaryujun
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/briefing/">Briefing</a></li><!--
+     --><!--
+       --><li><a href="/projects/">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

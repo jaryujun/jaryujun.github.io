@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="最近我在用 AI 搭一个 HRMS 后台模板。刚开始的做法很“vibe coding”：想到哪做到哪，缺什么补什么，前后端、接口、权限、测试全靠上下文临时拼接。这样的方式适合快速试错，但一旦要把项目沉淀成可复用模板，问题就会集中出现。 比如后端一跑起来，常见坑就来了：Flyway 迁移脚本需要数据库权限、springfox 和 Spring Boot 版本不兼容、Swagger 页面被 Sprin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从 Vibe Coding 到提示词驱动开发：如何搭一套可复用的 HRMS 模板">
+<meta property="og:url" content="https://jaryujun.github.io/2025/10/28/%E4%BB%8E%20Vibe%20Coding%20%E5%88%B0%E6%8F%90%E7%A4%BA%E8%AF%8D%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E5%A6%82%E4%BD%95%E6%90%AD%E4%B8%80%E5%A5%97%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%20HRMS%20%E6%A8%A1%E6%9D%BF/index.html">
+<meta property="og:site_name" content="Jaryujun Blog">
+<meta property="og:description" content="最近我在用 AI 搭一个 HRMS 后台模板。刚开始的做法很“vibe coding”：想到哪做到哪，缺什么补什么，前后端、接口、权限、测试全靠上下文临时拼接。这样的方式适合快速试错，但一旦要把项目沉淀成可复用模板，问题就会集中出现。 比如后端一跑起来，常见坑就来了：Flyway 迁移脚本需要数据库权限、springfox 和 Spring Boot 版本不兼容、Swagger 页面被 Sprin">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-10-28T02:49:44.000Z">
+<meta property="article:modified_time" content="2026-03-13T07:20:43.107Z">
+<meta property="article:author" content="Jaryujun">
+<meta property="article:tag" content="HRMS">
+<meta property="article:tag" content="Prompt">
+<meta property="article:tag" content="vibe-coding">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>从 Vibe Coding 到提示词驱动开发：如何搭一套可复用的 HRMS 模板</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/briefing/">Briefing</a></li><!--
+     --><!--
+       --><li><a href="/projects/">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/12/04/%E5%AF%B9%E9%AB%98%E9%80%9F%E5%8F%91%E5%B1%95%E9%98%B6%E6%AE%B5%E7%9A%84%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84%E6%B2%BB%E7%90%86%E7%AD%96%E7%95%A5%E7%9A%84%E6%80%9D%E8%80%83/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/09/11/%E7%94%B3%E8%AF%B7-Apple-Developer-%E5%BC%80%E5%8F%91%E8%AF%81%E4%B9%A6/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://jaryujun.github.io/2025/10/28/%E4%BB%8E%20Vibe%20Coding%20%E5%88%B0%E6%8F%90%E7%A4%BA%E8%AF%8D%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E5%A6%82%E4%BD%95%E6%90%AD%E4%B8%80%E5%A5%97%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%20HRMS%20%E6%A8%A1%E6%9D%BF/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://jaryujun.github.io/2025/10/28/%E4%BB%8E%20Vibe%20Coding%20%E5%88%B0%E6%8F%90%E7%A4%BA%E8%AF%8D%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E5%A6%82%E4%BD%95%E6%90%AD%E4%B8%80%E5%A5%97%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%20HRMS%20%E6%A8%A1%E6%9D%BF/&text=从 Vibe Coding 到提示词驱动开发：如何搭一套可复用的 HRMS 模板"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://jaryujun.github.io/2025/10/28/%E4%BB%8E%20Vibe%20Coding%20%E5%88%B0%E6%8F%90%E7%A4%BA%E8%AF%8D%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E5%A6%82%E4%BD%95%E6%90%AD%E4%B8%80%E5%A5%97%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%20HRMS%20%E6%A8%A1%E6%9D%BF/&title=从 Vibe Coding 到提示词驱动开发：如何搭一套可复用的 HRMS 模板"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://jaryujun.github.io/2025/10/28/%E4%BB%8E%20Vibe%20Coding%20%E5%88%B0%E6%8F%90%E7%A4%BA%E8%AF%8D%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E5%A6%82%E4%BD%95%E6%90%AD%E4%B8%80%E5%A5%97%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%20HRMS%20%E6%A8%A1%E6%9D%BF/&is_video=false&description=从 Vibe Coding 到提示词驱动开发：如何搭一套可复用的 HRMS 模板"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=从 Vibe Coding 到提示词驱动开发：如何搭一套可复用的 HRMS 模板&body=Check out this article: https://jaryujun.github.io/2025/10/28/%E4%BB%8E%20Vibe%20Coding%20%E5%88%B0%E6%8F%90%E7%A4%BA%E8%AF%8D%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E5%A6%82%E4%BD%95%E6%90%AD%E4%B8%80%E5%A5%97%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%20HRMS%20%E6%A8%A1%E6%9D%BF/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://jaryujun.github.io/2025/10/28/%E4%BB%8E%20Vibe%20Coding%20%E5%88%B0%E6%8F%90%E7%A4%BA%E8%AF%8D%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E5%A6%82%E4%BD%95%E6%90%AD%E4%B8%80%E5%A5%97%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%20HRMS%20%E6%A8%A1%E6%9D%BF/&title=从 Vibe Coding 到提示词驱动开发：如何搭一套可复用的 HRMS 模板"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://jaryujun.github.io/2025/10/28/%E4%BB%8E%20Vibe%20Coding%20%E5%88%B0%E6%8F%90%E7%A4%BA%E8%AF%8D%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E5%A6%82%E4%BD%95%E6%90%AD%E4%B8%80%E5%A5%97%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%20HRMS%20%E6%A8%A1%E6%9D%BF/&title=从 Vibe Coding 到提示词驱动开发：如何搭一套可复用的 HRMS 模板"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://jaryujun.github.io/2025/10/28/%E4%BB%8E%20Vibe%20Coding%20%E5%88%B0%E6%8F%90%E7%A4%BA%E8%AF%8D%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E5%A6%82%E4%BD%95%E6%90%AD%E4%B8%80%E5%A5%97%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%20HRMS%20%E6%A8%A1%E6%9D%BF/&title=从 Vibe Coding 到提示词驱动开发：如何搭一套可复用的 HRMS 模板"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://jaryujun.github.io/2025/10/28/%E4%BB%8E%20Vibe%20Coding%20%E5%88%B0%E6%8F%90%E7%A4%BA%E8%AF%8D%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E5%A6%82%E4%BD%95%E6%90%AD%E4%B8%80%E5%A5%97%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%20HRMS%20%E6%A8%A1%E6%9D%BF/&title=从 Vibe Coding 到提示词驱动开发：如何搭一套可复用的 HRMS 模板"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://jaryujun.github.io/2025/10/28/%E4%BB%8E%20Vibe%20Coding%20%E5%88%B0%E6%8F%90%E7%A4%BA%E8%AF%8D%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E5%A6%82%E4%BD%95%E6%90%AD%E4%B8%80%E5%A5%97%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%20HRMS%20%E6%A8%A1%E6%9D%BF/&name=从 Vibe Coding 到提示词驱动开发：如何搭一套可复用的 HRMS 模板&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://jaryujun.github.io/2025/10/28/%E4%BB%8E%20Vibe%20Coding%20%E5%88%B0%E6%8F%90%E7%A4%BA%E8%AF%8D%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E5%A6%82%E4%BD%95%E6%90%AD%E4%B8%80%E5%A5%97%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%20HRMS%20%E6%A8%A1%E6%9D%BF/&t=从 Vibe Coding 到提示词驱动开发：如何搭一套可复用的 HRMS 模板"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%85%88%E6%8A%BD%E5%8F%96%E4%B8%8D%E5%8F%98%E9%87%8F"><span class="toc-number">1.</span> <span class="toc-text">为什么要先抽取不变量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8D%E5%8F%98%E9%87%8F%E6%B8%85%E5%8D%95"><span class="toc-number">1.1.</span> <span class="toc-text">不变量清单</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8-ScaffoldSpec-%E6%94%B6%E6%95%9B%E5%8F%98%E5%8C%96"><span class="toc-number">2.</span> <span class="toc-text">用 ScaffoldSpec 收敛变化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ScaffoldSpec-%E7%BB%93%E6%9E%84"><span class="toc-number">2.1.</span> <span class="toc-text">ScaffoldSpec 结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ScaffoldSpec-%E7%A4%BA%E4%BE%8B"><span class="toc-number">2.2.</span> <span class="toc-text">ScaffoldSpec 示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%8B%86%E6%88%90%E4%B8%89%E6%AE%B5-Prompt"><span class="toc-number">3.</span> <span class="toc-text">为什么要拆成三段 Prompt</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Prompt-1%EF%BC%9A%E9%9C%80%E6%B1%82%E6%94%B6%E9%9B%86"><span class="toc-number">4.</span> <span class="toc-text">Prompt 1：需求收集</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Prompt-2%EF%BC%9A%E6%90%AD%E5%BB%BA%E6%8C%87%E4%BB%A4"><span class="toc-number">5.</span> <span class="toc-text">Prompt 2：搭建指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Prompt-3%EF%BC%9A%E9%AA%8C%E8%AF%81%E6%8C%87%E4%BB%A4"><span class="toc-number">6.</span> <span class="toc-text">Prompt 3：验证指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8%E9%A1%BA%E5%BA%8F"><span class="toc-number">7.</span> <span class="toc-text">推荐使用顺序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Test-Plan"><span class="toc-number">8.</span> <span class="toc-text">Test Plan</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%99%E5%A5%97%E6%96%B9%E6%B3%95%E7%9C%9F%E6%AD%A3%E8%A7%A3%E5%86%B3%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-number">9.</span> <span class="toc-text">这套方法真正解决了什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">10.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        从 Vibe Coding 到提示词驱动开发：如何搭一套可复用的 HRMS 模板
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Jaryujun</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-10-28T02:49:44.000Z" class="dt-published" itemprop="datePublished">2025-10-28</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/HRMS/" rel="tag">HRMS</a>, <a class="p-category" href="/tags/Prompt/" rel="tag">Prompt</a>, <a class="p-category" href="/tags/vibe-coding/" rel="tag">vibe-coding</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>最近我在用 AI 搭一个 HRMS 后台模板。刚开始的做法很“vibe coding”：想到哪做到哪，缺什么补什么，前后端、接口、权限、测试全靠上下文临时拼接。这样的方式适合快速试错，但一旦要把项目沉淀成可复用模板，问题就会集中出现。</p>
+<p>比如后端一跑起来，常见坑就来了：Flyway 迁移脚本需要数据库权限、<code>springfox</code> 和 Spring Boot 版本不兼容、Swagger 页面被 Spring Security 拦截，甚至匿名白名单在 <code>SecurityConfig</code> 和 <code>JwtAuthenticationFilter</code> 里维护了两份。回头看，这些问题并不全是“代码写错了”，更多是因为项目里哪些东西是固定约束、哪些东西是可变输入，没有在一开始说清楚。</p>
+<p>所以我换了一个思路：先抽取 HRMS 项目的不变量，再把可变部分收敛成一份结构化输入，最后把整个流程拆成“需求收集、项目搭建、基础验证”三段式提示词。这样做的目标不是让 AI 一次性生成完美系统，而是让它稳定地生成一个可继续演化的脚手架。</p>
+<h2 id="为什么要先抽取不变量"><a href="#为什么要先抽取不变量" class="headerlink" title="为什么要先抽取不变量"></a>为什么要先抽取不变量</h2><p>如果想让 AI 生成出来的东西能长期复用，第一步不是写 Prompt，而是先回答一个问题：这个项目里，到底哪些东西不能变？</p>
+<p>对这套 HRMS 模板来说，不变量主要有五类：技术栈、目录结构、接口约定、RBAC 核心模型，以及安全边界。只有先把这些讲清楚，AI 才不会一会儿给你生成 React，一会儿又把权限系统改成另一套命名。</p>
+<h3 id="不变量清单"><a href="#不变量清单" class="headerlink" title="不变量清单"></a>不变量清单</h3><ul>
+<li>前端技术栈与目录结构：Vue 3 + TypeScript + Vite + Element Plus + Tailwind，目录根为 <code>frontend/</code></li>
+<li>后端技术栈与目录结构：Spring Boot 3.2.5 + Java 17 + MyBatis-Plus + Spring Security + JWT，目录根为 <code>backend/</code></li>
+<li>接口返回结构：统一 <code>ApiResponse</code> 与 <code>PageResponse</code> 包裹</li>
+<li>RBAC 核心表：<code>sys_user</code>、<code>sys_role</code>、<code>sys_menu</code>、<code>sys_user_role</code>、<code>sys_role_menu</code></li>
+<li>核心接口路径：<code>/api/auth/login</code>、<code>/api/user/info</code>、<code>/api/user/list</code>、<code>/api/role/list</code>、<code>/api/v3/system/menus</code></li>
+<li>安全约束：任何 <code>.env</code> 仅提供占位符或 <code>.env.example</code>，禁止真实密钥</li>
+</ul>
+<p>这里最重要的并不是“列一份清单”本身，而是把模型的自由度控制在正确范围内。技术选型、接口形状和权限表结构不应该由 AI 即兴发挥；真正应该开放给生成器的，是项目名、端口、数据库占位符、初始角色和菜单树。</p>
+<h2 id="用-ScaffoldSpec-收敛变化"><a href="#用-ScaffoldSpec-收敛变化" class="headerlink" title="用 ScaffoldSpec 收敛变化"></a>用 ScaffoldSpec 收敛变化</h2><p>把不变量固定下来之后，下一步就是定义一份足够小、但信息完整的输入结构。我把它叫做 <code>ScaffoldSpec</code>。它的作用很简单：让项目差异都收敛在一个 JSON 里，而不是散落在多轮对话里。</p>
+<h3 id="ScaffoldSpec-结构"><a href="#ScaffoldSpec-结构" class="headerlink" title="ScaffoldSpec 结构"></a>ScaffoldSpec 结构</h3><pre><code class="highlight json"><span class="punctuation">&#123;</span>
+  <span class="attr">&quot;project&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span>
+    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;string&quot;</span><span class="punctuation">,</span>
+    <span class="attr">&quot;packageName&quot;</span><span class="punctuation">:</span> <span class="string">&quot;string&quot;</span><span class="punctuation">,</span>
+    <span class="attr">&quot;frontendPort&quot;</span><span class="punctuation">:</span> <span class="number">3000</span><span class="punctuation">,</span>
+    <span class="attr">&quot;backendPort&quot;</span><span class="punctuation">:</span> <span class="number">9000</span><span class="punctuation">,</span>
+    <span class="attr">&quot;accessMode&quot;</span><span class="punctuation">:</span> <span class="string">&quot;frontend | backend&quot;</span>
+  <span class="punctuation">&#125;</span><span class="punctuation">,</span>
+  <span class="attr">&quot;database&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span>
+    <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;mysql&quot;</span><span class="punctuation">,</span>
+    <span class="attr">&quot;host&quot;</span><span class="punctuation">:</span> <span class="string">&quot;placeholder&quot;</span><span class="punctuation">,</span>
+    <span class="attr">&quot;port&quot;</span><span class="punctuation">:</span> <span class="number">3306</span><span class="punctuation">,</span>
+    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;placeholder&quot;</span><span class="punctuation">,</span>
+    <span class="attr">&quot;username&quot;</span><span class="punctuation">:</span> <span class="string">&quot;placeholder&quot;</span><span class="punctuation">,</span>
+    <span class="attr">&quot;password&quot;</span><span class="punctuation">:</span> <span class="string">&quot;placeholder&quot;</span>
+  <span class="punctuation">&#125;</span><span class="punctuation">,</span>
+  <span class="attr">&quot;rbac&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span>
+    <span class="attr">&quot;roles&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span>
+      <span class="punctuation">&#123;</span> <span class="attr">&quot;code&quot;</span><span class="punctuation">:</span> <span class="string">&quot;R_SUPER&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;超级管理员&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;description&quot;</span><span class="punctuation">:</span> <span class="string">&quot;...&quot;</span> <span class="punctuation">&#125;</span>
+    <span class="punctuation">]</span><span class="punctuation">,</span>
+    <span class="attr">&quot;menuTree&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span>
+      <span class="punctuation">&#123;</span>
+        <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;System&quot;</span><span class="punctuation">,</span>
+        <span class="attr">&quot;path&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/system&quot;</span><span class="punctuation">,</span>
+        <span class="attr">&quot;component&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/index/index&quot;</span><span class="punctuation">,</span>
+        <span class="attr">&quot;children&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">]</span>
+      <span class="punctuation">&#125;</span>
+    <span class="punctuation">]</span><span class="punctuation">,</span>
+    <span class="attr">&quot;seedStrategy&quot;</span><span class="punctuation">:</span> <span class="string">&quot;minimal | standard | custom&quot;</span>
+  <span class="punctuation">&#125;</span>
+<span class="punctuation">&#125;</span></code></pre>
+
+<p>这个结构有两个好处。</p>
+<p>第一，它足够稳定。无论你是做人事系统、组织管理后台，还是一个轻量 RBAC 管理台，只要基础约束一致，都可以复用这份规范。</p>
+<p>第二，它足够可控。所有默认值、占位符和初始化数据都能在这里声明清楚，后面的搭建 Prompt 只需要“执行规范”，而不是重新理解需求。</p>
+<h3 id="ScaffoldSpec-示例"><a href="#ScaffoldSpec-示例" class="headerlink" title="ScaffoldSpec 示例"></a>ScaffoldSpec 示例</h3><p>下面是一份可以直接拿来喂给生成器的示例：</p>
+<pre><code class="highlight json"><span class="punctuation">&#123;</span>
+  <span class="attr">&quot;project&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span>
+    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;hrms-template&quot;</span><span class="punctuation">,</span>
+    <span class="attr">&quot;packageName&quot;</span><span class="punctuation">:</span> <span class="string">&quot;com.hrms&quot;</span><span class="punctuation">,</span>
+    <span class="attr">&quot;frontendPort&quot;</span><span class="punctuation">:</span> <span class="number">3006</span><span class="punctuation">,</span>
+    <span class="attr">&quot;backendPort&quot;</span><span class="punctuation">:</span> <span class="number">9000</span><span class="punctuation">,</span>
+    <span class="attr">&quot;accessMode&quot;</span><span class="punctuation">:</span> <span class="string">&quot;backend&quot;</span>
+  <span class="punctuation">&#125;</span><span class="punctuation">,</span>
+  <span class="attr">&quot;database&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span>
+    <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;mysql&quot;</span><span class="punctuation">,</span>
+    <span class="attr">&quot;host&quot;</span><span class="punctuation">:</span> <span class="string">&quot;DB_HOST&quot;</span><span class="punctuation">,</span>
+    <span class="attr">&quot;port&quot;</span><span class="punctuation">:</span> <span class="number">3306</span><span class="punctuation">,</span>
+    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;DB_NAME&quot;</span><span class="punctuation">,</span>
+    <span class="attr">&quot;username&quot;</span><span class="punctuation">:</span> <span class="string">&quot;DB_USERNAME&quot;</span><span class="punctuation">,</span>
+    <span class="attr">&quot;password&quot;</span><span class="punctuation">:</span> <span class="string">&quot;DB_PASSWORD&quot;</span>
+  <span class="punctuation">&#125;</span><span class="punctuation">,</span>
+  <span class="attr">&quot;rbac&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span>
+    <span class="attr">&quot;roles&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span>
+      <span class="punctuation">&#123;</span> <span class="attr">&quot;code&quot;</span><span class="punctuation">:</span> <span class="string">&quot;R_SUPER&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;超级管理员&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;description&quot;</span><span class="punctuation">:</span> <span class="string">&quot;拥有系统全部权限&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span>
+      <span class="punctuation">&#123;</span> <span class="attr">&quot;code&quot;</span><span class="punctuation">:</span> <span class="string">&quot;R_ADMIN&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;管理员&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;description&quot;</span><span class="punctuation">:</span> <span class="string">&quot;拥有系统管理权限&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span>
+      <span class="punctuation">&#123;</span> <span class="attr">&quot;code&quot;</span><span class="punctuation">:</span> <span class="string">&quot;R_USER&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;普通用户&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;description&quot;</span><span class="punctuation">:</span> <span class="string">&quot;拥有系统普通权限&quot;</span> <span class="punctuation">&#125;</span>
+    <span class="punctuation">]</span><span class="punctuation">,</span>
+    <span class="attr">&quot;menuTree&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span>
+      <span class="punctuation">&#123;</span>
+        <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;System&quot;</span><span class="punctuation">,</span>
+        <span class="attr">&quot;path&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/system&quot;</span><span class="punctuation">,</span>
+        <span class="attr">&quot;component&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/index/index&quot;</span><span class="punctuation">,</span>
+        <span class="attr">&quot;children&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span>
+          <span class="punctuation">&#123;</span> <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;User&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;path&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/system/user&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;component&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/system/user&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span>
+          <span class="punctuation">&#123;</span> <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Role&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;path&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/system/role&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;component&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/system/role&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span>
+          <span class="punctuation">&#123;</span> <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Menus&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;path&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/system/menu&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;component&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/system/menu&quot;</span> <span class="punctuation">&#125;</span>
+        <span class="punctuation">]</span>
+      <span class="punctuation">&#125;</span>
+    <span class="punctuation">]</span><span class="punctuation">,</span>
+    <span class="attr">&quot;seedStrategy&quot;</span><span class="punctuation">:</span> <span class="string">&quot;standard&quot;</span>
+  <span class="punctuation">&#125;</span>
+<span class="punctuation">&#125;</span></code></pre>
+
+<p>如果你没有额外需求，其实用这份示例就已经能搭出一个最小可运行的 HRMS 模板。文中后面提到的“HRMS 默认角色与菜单树”，也可以直接使用这份示例里的 <code>roles</code> 和 <code>menuTree</code>。</p>
+<h2 id="为什么要拆成三段-Prompt"><a href="#为什么要拆成三段-Prompt" class="headerlink" title="为什么要拆成三段 Prompt"></a>为什么要拆成三段 Prompt</h2><p>很多人写 Prompt 时喜欢把“需求理解、代码生成、测试验证”塞进同一段话里，表面上看信息更全，实际上更容易失控。因为这三个阶段关注的目标完全不同：</p>
+<ul>
+<li>需求收集阶段，要解决的是输入是否完整</li>
+<li>搭建阶段，要解决的是输出是否符合既定约束</li>
+<li>验证阶段，要解决的是结果是否真的能构建和通过最小测试</li>
+</ul>
+<p>把它们拆开以后，每一段 Prompt 的职责会更清晰，失败也更容易定位。</p>
+<h2 id="Prompt-1：需求收集"><a href="#Prompt-1：需求收集" class="headerlink" title="Prompt 1：需求收集"></a>Prompt 1：需求收集</h2><p>第一段 Prompt 的职责不是生成代码，而是把需求整理成一份完整的 <code>ScaffoldSpec</code>。如果用户没给全，就自动补默认值，并明确告诉他还缺哪些信息需要追问。</p>
+<pre><code class="highlight text">你是“HRMS 模板生成器”的需求收集助手。
+
+目标：
+1) 输出一份完整的 ScaffoldSpec JSON（结构固定）。
+2) 若输入缺失任何字段，按默认值补齐，并在 JSON 下追加“缺失项追问清单”。
+
+规则：
+- 默认值：
+  project.frontendPort=3006，project.backendPort=9000，project.accessMode=&quot;backend&quot;
+  database.type=&quot;mysql&quot; 且使用占位符（DB_HOST/DB_NAME/DB_USERNAME/DB_PASSWORD）
+  rbac.seedStrategy=&quot;standard&quot;
+- 若未提供 rbac.roles 或 rbac.menuTree，则使用“HRMS 默认角色与菜单树”。
+- 输出只包含 JSON + 追问清单，不要附加解释性文本。
+
+输入：
+&#123;用户需求或空&#125;
+
+输出示例：
+&lt;JSON&gt;
+&lt;缺失项追问清单&gt;</code></pre>
+
+<p>这一段的价值在于“先把输入标准化”。到这里为止，AI 还没有开始生成项目，但它已经把后续搭建所需的参数整理好了。</p>
+<h2 id="Prompt-2：搭建指令"><a href="#Prompt-2：搭建指令" class="headerlink" title="Prompt 2：搭建指令"></a>Prompt 2：搭建指令</h2><p>第二段 Prompt 才真正负责生成项目结构。它强调的重点不是“生成一个后台系统”，而是“严格对齐当前仓库结构与接口约定”。换句话说，它是一个执行器，不是自由创作者。</p>
+<pre><code class="highlight text">你是“HRMS 模板生成器”的搭建执行助手。
+
+输入：
+- ScaffoldSpec JSON
+- 约束：前端目录结构与技术栈对齐 `frontend/`
+- 约束：后端目录结构与技术栈对齐 `backend/`
+- 约束：API 接口与响应结构必须包含：
+  /api/auth/login
+  /api/user/info
+  /api/user/list
+  /api/role/list
+  /api/v3/system/menus
+  ApiResponse / PageResponse 包裹
+- 约束：RBAC 表结构必须包含 sys_user / sys_role / sys_menu / sys_user_role / sys_role_menu
+- 安全约束：禁止任何真实密钥，只能生成 .env.example 或占位符
+
+任务：
+1) 根据 ScaffoldSpec 生成模板项目结构（frontend + backend）。
+2) 配置后端 application.yml、前端环境变量与 API 基础地址。
+3) 生成 schema.sql 与 data.sql，角色与菜单树来自 ScaffoldSpec。
+4) 确保接口路径与前端调用一致，且后端返回结构与前端类型对齐。
+5) 输出“生成摘要 + 关键文件清单 + 注意事项”，不要输出超长源码。
+
+输出：
+- 生成摘要
+- 关键文件清单
+- 注意事项（含敏感信息提醒）</code></pre>
+
+<p>这一段的核心是“把生成约束写死”。例如统一 <code>ApiResponse</code> &#x2F; <code>PageResponse</code>、固定接口路径、限定 RBAC 表结构、禁止真实密钥，这些都应该明确写进 Prompt，而不是寄希望于模型自己记住。</p>
+<h2 id="Prompt-3：验证指令"><a href="#Prompt-3：验证指令" class="headerlink" title="Prompt 3：验证指令"></a>Prompt 3：验证指令</h2><p>第三段 Prompt 只做一件事：用最小成本确认这个模板至少是可构建的。这里我特意加了一个限制条件: 不依赖真实数据库。因为模板阶段最容易出现的问题，并不是业务逻辑是否完整，而是项目骨架能不能跑通。</p>
+<pre><code class="highlight text">你是“HRMS 模板生成器”的验证助手。
+
+目标：
+执行基础验证，确保模板可构建且通过最小测试。
+
+约束：
+- 不依赖真实数据库
+- 不使用真实密钥
+
+验证步骤：
+1) 前端：
+   - 进入 frontend 目录
+   - 运行 `pnpm lint`
+   - 运行 `pnpm build`
+2) 后端：
+   - 进入 backend 目录
+   - 运行 `mvn test`
+   - 若无测试用例，确保 contextLoads 通过即可
+
+通过标准：
+- 前端构建成功
+- 后端测试通过（或上下文加载成功）
+
+输出：
+- 每步执行结果
+- 失败原因与最短修复建议</code></pre>
+
+<p>把验证从生成里拆出来之后，一个很直接的好处是：当失败发生时，你能立刻知道问题出在“提示词理解错误”“模板结构错误”还是“工程自身无法构建”，排查成本会低很多。</p>
+<h2 id="推荐使用顺序"><a href="#推荐使用顺序" class="headerlink" title="推荐使用顺序"></a>推荐使用顺序</h2><p>如果你打算真的把这套东西用起来，我建议严格按下面顺序执行：</p>
+<ol>
+<li>先用 Prompt 1，把需求收敛为一份完整的 <code>ScaffoldSpec</code></li>
+<li>再把 <code>ScaffoldSpec</code> 交给 Prompt 2，生成前后端模板结构</li>
+<li>最后用 Prompt 3 做基础验证，确认前端能构建、后端能通过最小测试</li>
+</ol>
+<p>这三个阶段不要合并，也不要跳步。尤其是在模板项目里，先定义输入、再执行搭建、最后做验证，会比“一段话让 AI 全干完”稳定得多。</p>
+<h2 id="Test-Plan"><a href="#Test-Plan" class="headerlink" title="Test Plan"></a>Test Plan</h2><p>为了让这套提示词包具备最基本的可验性，我给自己定了一个很朴素的测试方案：</p>
+<pre><code class="highlight text">- 使用 Prompt 1 产出示例 ScaffoldSpec。
+- 用 Prompt 2 生成项目后，执行 Prompt 3 的基础验证命令。
+- 验证通过标准为：前端构建成功、后端测试通过（或能启动到上下文加载）。</code></pre>
+
+<p>这套测试方案不追求覆盖所有业务细节，它只解决一个更关键的问题：这是不是一个“能继续开发”的起点。如果连这个都保证不了，后面讨论功能扩展其实没有意义。</p>
+<h2 id="这套方法真正解决了什么"><a href="#这套方法真正解决了什么" class="headerlink" title="这套方法真正解决了什么"></a>这套方法真正解决了什么</h2><p>写完这套提示词包之后，我最大的感受不是“AI 更强了”，而是项目边界终于清晰了。</p>
+<p>以前的问题是，AI 每次都在“猜”这个项目到底想长成什么样；现在的方式则是，我先把不变量和输入结构定义清楚，再让它在约束里生成。这样做的好处很直接：</p>
+<ul>
+<li>项目骨架更稳定，不容易在技术栈和目录结构上跑偏</li>
+<li>接口、返回结构和权限模型更一致，前后端对齐成本更低</li>
+<li>安全边界更明确，不会在示例项目里意外塞入真实密钥</li>
+<li>验证链路更清楚，失败时能快速知道是哪一段出了问题</li>
+</ul>
+<p>本质上，这并不是“更会写 Prompt”了，而是把原本隐性的工程约束，显式变成了可执行规范。</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>我越来越觉得，所谓好的 vibe coding，并不是把所有事情都交给 AI 临场发挥，而是先把不会变的东西固化下来，再把真正该变化的部分交给生成。</p>
+<p>对 HRMS 这种后台模板项目来说，<code>ScaffoldSpec</code> 负责收敛输入，三段式 Prompt 负责拆分流程，验证步骤负责守住下限。这样一来，AI 生成出来的就不再只是“一次性的代码”，而是一套可以持续复用、持续演化的脚手架。</p>
+<p>如果以后我要继续扩展组织架构、审批流、考勤、薪资这些模块，我大概率也还会沿用这套思路：先抽取不变量，再定义输入规范，最后让生成过程有明确边界。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/briefing/">Briefing</a></li>
+        
+          <li><a href="/projects/">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%85%88%E6%8A%BD%E5%8F%96%E4%B8%8D%E5%8F%98%E9%87%8F"><span class="toc-number">1.</span> <span class="toc-text">为什么要先抽取不变量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8D%E5%8F%98%E9%87%8F%E6%B8%85%E5%8D%95"><span class="toc-number">1.1.</span> <span class="toc-text">不变量清单</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8-ScaffoldSpec-%E6%94%B6%E6%95%9B%E5%8F%98%E5%8C%96"><span class="toc-number">2.</span> <span class="toc-text">用 ScaffoldSpec 收敛变化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ScaffoldSpec-%E7%BB%93%E6%9E%84"><span class="toc-number">2.1.</span> <span class="toc-text">ScaffoldSpec 结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ScaffoldSpec-%E7%A4%BA%E4%BE%8B"><span class="toc-number">2.2.</span> <span class="toc-text">ScaffoldSpec 示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%8B%86%E6%88%90%E4%B8%89%E6%AE%B5-Prompt"><span class="toc-number">3.</span> <span class="toc-text">为什么要拆成三段 Prompt</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Prompt-1%EF%BC%9A%E9%9C%80%E6%B1%82%E6%94%B6%E9%9B%86"><span class="toc-number">4.</span> <span class="toc-text">Prompt 1：需求收集</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Prompt-2%EF%BC%9A%E6%90%AD%E5%BB%BA%E6%8C%87%E4%BB%A4"><span class="toc-number">5.</span> <span class="toc-text">Prompt 2：搭建指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Prompt-3%EF%BC%9A%E9%AA%8C%E8%AF%81%E6%8C%87%E4%BB%A4"><span class="toc-number">6.</span> <span class="toc-text">Prompt 3：验证指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8%E9%A1%BA%E5%BA%8F"><span class="toc-number">7.</span> <span class="toc-text">推荐使用顺序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Test-Plan"><span class="toc-number">8.</span> <span class="toc-text">Test Plan</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%99%E5%A5%97%E6%96%B9%E6%B3%95%E7%9C%9F%E6%AD%A3%E8%A7%A3%E5%86%B3%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-number">9.</span> <span class="toc-text">这套方法真正解决了什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">10.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://jaryujun.github.io/2025/10/28/%E4%BB%8E%20Vibe%20Coding%20%E5%88%B0%E6%8F%90%E7%A4%BA%E8%AF%8D%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E5%A6%82%E4%BD%95%E6%90%AD%E4%B8%80%E5%A5%97%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%20HRMS%20%E6%A8%A1%E6%9D%BF/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://jaryujun.github.io/2025/10/28/%E4%BB%8E%20Vibe%20Coding%20%E5%88%B0%E6%8F%90%E7%A4%BA%E8%AF%8D%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E5%A6%82%E4%BD%95%E6%90%AD%E4%B8%80%E5%A5%97%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%20HRMS%20%E6%A8%A1%E6%9D%BF/&text=从 Vibe Coding 到提示词驱动开发：如何搭一套可复用的 HRMS 模板"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://jaryujun.github.io/2025/10/28/%E4%BB%8E%20Vibe%20Coding%20%E5%88%B0%E6%8F%90%E7%A4%BA%E8%AF%8D%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E5%A6%82%E4%BD%95%E6%90%AD%E4%B8%80%E5%A5%97%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%20HRMS%20%E6%A8%A1%E6%9D%BF/&title=从 Vibe Coding 到提示词驱动开发：如何搭一套可复用的 HRMS 模板"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://jaryujun.github.io/2025/10/28/%E4%BB%8E%20Vibe%20Coding%20%E5%88%B0%E6%8F%90%E7%A4%BA%E8%AF%8D%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E5%A6%82%E4%BD%95%E6%90%AD%E4%B8%80%E5%A5%97%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%20HRMS%20%E6%A8%A1%E6%9D%BF/&is_video=false&description=从 Vibe Coding 到提示词驱动开发：如何搭一套可复用的 HRMS 模板"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=从 Vibe Coding 到提示词驱动开发：如何搭一套可复用的 HRMS 模板&body=Check out this article: https://jaryujun.github.io/2025/10/28/%E4%BB%8E%20Vibe%20Coding%20%E5%88%B0%E6%8F%90%E7%A4%BA%E8%AF%8D%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E5%A6%82%E4%BD%95%E6%90%AD%E4%B8%80%E5%A5%97%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%20HRMS%20%E6%A8%A1%E6%9D%BF/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://jaryujun.github.io/2025/10/28/%E4%BB%8E%20Vibe%20Coding%20%E5%88%B0%E6%8F%90%E7%A4%BA%E8%AF%8D%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E5%A6%82%E4%BD%95%E6%90%AD%E4%B8%80%E5%A5%97%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%20HRMS%20%E6%A8%A1%E6%9D%BF/&title=从 Vibe Coding 到提示词驱动开发：如何搭一套可复用的 HRMS 模板"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://jaryujun.github.io/2025/10/28/%E4%BB%8E%20Vibe%20Coding%20%E5%88%B0%E6%8F%90%E7%A4%BA%E8%AF%8D%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E5%A6%82%E4%BD%95%E6%90%AD%E4%B8%80%E5%A5%97%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%20HRMS%20%E6%A8%A1%E6%9D%BF/&title=从 Vibe Coding 到提示词驱动开发：如何搭一套可复用的 HRMS 模板"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://jaryujun.github.io/2025/10/28/%E4%BB%8E%20Vibe%20Coding%20%E5%88%B0%E6%8F%90%E7%A4%BA%E8%AF%8D%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E5%A6%82%E4%BD%95%E6%90%AD%E4%B8%80%E5%A5%97%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%20HRMS%20%E6%A8%A1%E6%9D%BF/&title=从 Vibe Coding 到提示词驱动开发：如何搭一套可复用的 HRMS 模板"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://jaryujun.github.io/2025/10/28/%E4%BB%8E%20Vibe%20Coding%20%E5%88%B0%E6%8F%90%E7%A4%BA%E8%AF%8D%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E5%A6%82%E4%BD%95%E6%90%AD%E4%B8%80%E5%A5%97%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%20HRMS%20%E6%A8%A1%E6%9D%BF/&title=从 Vibe Coding 到提示词驱动开发：如何搭一套可复用的 HRMS 模板"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://jaryujun.github.io/2025/10/28/%E4%BB%8E%20Vibe%20Coding%20%E5%88%B0%E6%8F%90%E7%A4%BA%E8%AF%8D%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E5%A6%82%E4%BD%95%E6%90%AD%E4%B8%80%E5%A5%97%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%20HRMS%20%E6%A8%A1%E6%9D%BF/&name=从 Vibe Coding 到提示词驱动开发：如何搭一套可复用的 HRMS 模板&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://jaryujun.github.io/2025/10/28/%E4%BB%8E%20Vibe%20Coding%20%E5%88%B0%E6%8F%90%E7%A4%BA%E8%AF%8D%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E5%A6%82%E4%BD%95%E6%90%AD%E4%B8%80%E5%A5%97%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%20HRMS%20%E6%A8%A1%E6%9D%BF/&t=从 Vibe Coding 到提示词驱动开发：如何搭一套可复用的 HRMS 模板"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Jaryujun
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/briefing/">Briefing</a></li><!--
+     --><!--
+       --><li><a href="/projects/">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
