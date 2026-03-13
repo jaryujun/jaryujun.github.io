@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="本文提供了最简化的 Mac 开发环境配置方案：通过一个 AI 提示词，让 Claude Code 自动完成从 Homebrew 到应用安装再到系统配置的所有工作。  准备工作安装 Claude Code CLI在终端中执行以下命令： brew install --cask claude-code  如果还没有安装 Homebrew，先安装它： &#x2F;bin&#x2F;bash -c &quot;$(curl -">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 Claude Code 完成新 Mac 的环境配置">
+<meta property="og:url" content="https://jaryujun.github.io/2025/12/15/%E4%BD%BF%E7%94%A8%20Claude%20Code%20%E5%AE%8C%E6%88%90%E6%96%B0%20Mac%20%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/index.html">
+<meta property="og:site_name" content="Jaryujun Blog">
+<meta property="og:description" content="本文提供了最简化的 Mac 开发环境配置方案：通过一个 AI 提示词，让 Claude Code 自动完成从 Homebrew 到应用安装再到系统配置的所有工作。  准备工作安装 Claude Code CLI在终端中执行以下命令： brew install --cask claude-code  如果还没有安装 Homebrew，先安装它： &#x2F;bin&#x2F;bash -c &quot;$(curl -">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-12-15T02:44:09.000Z">
+<meta property="article:modified_time" content="2026-03-13T02:08:21.235Z">
+<meta property="article:author" content="Jaryujun">
+<meta property="article:tag" content="Mac">
+<meta property="article:tag" content="Claude Code">
+<meta property="article:tag" content="Homebrew">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>使用 Claude Code 完成新 Mac 的环境配置</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/briefing/">Briefing</a></li><!--
+     --><!--
+       --><li><a href="/projects/">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/12/15/%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/12/15/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BA%E4%B8%AA%E4%BA%BA%E9%98%85%E8%AF%BB%E4%BF%A1%E6%81%AF%E6%B5%81/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://jaryujun.github.io/2025/12/15/%E4%BD%BF%E7%94%A8%20Claude%20Code%20%E5%AE%8C%E6%88%90%E6%96%B0%20Mac%20%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://jaryujun.github.io/2025/12/15/%E4%BD%BF%E7%94%A8%20Claude%20Code%20%E5%AE%8C%E6%88%90%E6%96%B0%20Mac%20%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/&text=使用 Claude Code 完成新 Mac 的环境配置"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://jaryujun.github.io/2025/12/15/%E4%BD%BF%E7%94%A8%20Claude%20Code%20%E5%AE%8C%E6%88%90%E6%96%B0%20Mac%20%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/&title=使用 Claude Code 完成新 Mac 的环境配置"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://jaryujun.github.io/2025/12/15/%E4%BD%BF%E7%94%A8%20Claude%20Code%20%E5%AE%8C%E6%88%90%E6%96%B0%20Mac%20%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/&is_video=false&description=使用 Claude Code 完成新 Mac 的环境配置"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=使用 Claude Code 完成新 Mac 的环境配置&body=Check out this article: https://jaryujun.github.io/2025/12/15/%E4%BD%BF%E7%94%A8%20Claude%20Code%20%E5%AE%8C%E6%88%90%E6%96%B0%20Mac%20%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://jaryujun.github.io/2025/12/15/%E4%BD%BF%E7%94%A8%20Claude%20Code%20%E5%AE%8C%E6%88%90%E6%96%B0%20Mac%20%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/&title=使用 Claude Code 完成新 Mac 的环境配置"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://jaryujun.github.io/2025/12/15/%E4%BD%BF%E7%94%A8%20Claude%20Code%20%E5%AE%8C%E6%88%90%E6%96%B0%20Mac%20%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/&title=使用 Claude Code 完成新 Mac 的环境配置"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://jaryujun.github.io/2025/12/15/%E4%BD%BF%E7%94%A8%20Claude%20Code%20%E5%AE%8C%E6%88%90%E6%96%B0%20Mac%20%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/&title=使用 Claude Code 完成新 Mac 的环境配置"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://jaryujun.github.io/2025/12/15/%E4%BD%BF%E7%94%A8%20Claude%20Code%20%E5%AE%8C%E6%88%90%E6%96%B0%20Mac%20%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/&title=使用 Claude Code 完成新 Mac 的环境配置"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://jaryujun.github.io/2025/12/15/%E4%BD%BF%E7%94%A8%20Claude%20Code%20%E5%AE%8C%E6%88%90%E6%96%B0%20Mac%20%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/&name=使用 Claude Code 完成新 Mac 的环境配置&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://jaryujun.github.io/2025/12/15/%E4%BD%BF%E7%94%A8%20Claude%20Code%20%E5%AE%8C%E6%88%90%E6%96%B0%20Mac%20%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/&t=使用 Claude Code 完成新 Mac 的环境配置"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-number">1.</span> <span class="toc-text">准备工作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-Claude-Code-CLI"><span class="toc-number">1.1.</span> <span class="toc-text">安装 Claude Code CLI</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%8F%90%E7%A4%BA%E8%AF%8D"><span class="toc-number">2.</span> <span class="toc-text">配置提示词</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%A4%96-Mac-%E7%8E%AF%E5%A2%83%E4%B8%80%E9%94%AE%E9%85%8D%E7%BD%AE%E6%8F%90%E7%A4%BA%E8%AF%8D"><span class="toc-number">2.1.</span> <span class="toc-text">🤖 Mac 环境一键配置提示词</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Java-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number"></span> <span class="toc-text">Java 环境变量</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Maven-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number"></span> <span class="toc-text">Maven 环境变量</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Node-js-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number"></span> <span class="toc-text">Node.js 环境变量</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#npm-%E5%85%A8%E5%B1%80%E5%8C%85%E8%B7%AF%E5%BE%84"><span class="toc-number"></span> <span class="toc-text">npm 全局包路径</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#pnpm-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number"></span> <span class="toc-text">pnpm 环境变量</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E5%AE%8C%E6%88%90%E5%90%8E"><span class="toc-number">1.</span> <span class="toc-text">配置完成后</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%8B%E5%8A%A8%E5%AE%8C%E6%88%90%E7%9A%84%E4%BB%BB%E5%8A%A1"><span class="toc-number">1.1.</span> <span class="toc-text">手动完成的任务</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        使用 Claude Code 完成新 Mac 的环境配置
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Jaryujun</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-12-15T02:44:09.000Z" class="dt-published" itemprop="datePublished">2025-12-15</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Claude-Code/" rel="tag">Claude Code</a>, <a class="p-category" href="/tags/Homebrew/" rel="tag">Homebrew</a>, <a class="p-category" href="/tags/Mac/" rel="tag">Mac</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>本文提供了最简化的 Mac 开发环境配置方案：通过一个 AI 提示词，让 Claude Code 自动完成从 Homebrew 到应用安装再到系统配置的所有工作。</p>
+<hr>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><h3 id="安装-Claude-Code-CLI"><a href="#安装-Claude-Code-CLI" class="headerlink" title="安装 Claude Code CLI"></a>安装 Claude Code CLI</h3><p>在终端中执行以下命令：</p>
+<pre><code class="highlight bash">brew install --cask claude-code</code></pre>
+
+<p>如果还没有安装 Homebrew，先安装它：</p>
+<pre><code class="highlight bash">/bin/bash -c <span class="string">&quot;<span class="subst">$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)</span>&quot;</span>
+<span class="built_in">echo</span> <span class="string">&#x27;eval &quot;$(/opt/homebrew/bin/brew shellenv)&quot;&#x27;</span> &gt;&gt; ~/.zprofile
+<span class="built_in">eval</span> <span class="string">&quot;<span class="subst">$(/opt/homebrew/bin/brew shellenv)</span>&quot;</span>
+brew install --cask claude-code</code></pre>
+
+<p>启动 Claude Code：</p>
+<pre><code class="highlight bash">claude</code></pre>
+
+<hr>
+<h2 id="配置提示词"><a href="#配置提示词" class="headerlink" title="配置提示词"></a>配置提示词</h2><p>在 Claude Code 中复制并执行以下完整提示词：</p>
+<hr>
+<h3 id="🤖-Mac-环境一键配置提示词"><a href="#🤖-Mac-环境一键配置提示词" class="headerlink" title="🤖 Mac 环境一键配置提示词"></a>🤖 Mac 环境一键配置提示词</h3><pre><code class="highlight plaintext">你好！请帮我完成新 Mac 的完整开发环境配置。每完成一步都要进行验证，确保安装成功后再继续下一步。
+
+## 第一部分：安装和配置 Homebrew
+
+1. 检查 Homebrew 是否已安装
+   - 执行：brew --version
+   - 如果未安装，执行安装命令：
+     /bin/bash -c &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)&quot;
+   - 配置环境变量到 ~/.zprofile：
+     echo &#x27;eval &quot;$(/opt/homebrew/bin/brew shellenv)&quot;&#x27; &gt;&gt; ~/.zprofile
+     eval &quot;$(/opt/homebrew/bin/brew shellenv)&quot;
+
+2. 验证 Homebrew 安装
+   - 执行：brew --version
+   - 显示版本号
+
+3. 更新 Homebrew
+   - 执行：brew update
+
+---
+
+## 第二部分：安装和配置开发环境
+
+### 2.1 安装 Git
+
+1. 安装 Git
+   - 执行：brew install git
+
+2. 验证 Git 安装
+   - 执行：git --version
+   - 显示版本号
+
+3. 提醒我配置 Git 用户信息（稍后手动执行）：</code></pre>
+<p>   git config –global user.name “Your Name”<br>   git config –global user.email “<a href="mailto:&#121;&#111;&#117;&#114;&#46;&#101;&#x6d;&#x61;&#x69;&#x6c;&#64;&#101;&#x78;&#x61;&#x6d;&#112;&#x6c;&#x65;&#46;&#x63;&#111;&#109;">your.email@example.com</a>“<br>   <pre><code class="highlight plaintext">
+### 2.2 安装 JDK 17
+
+1. 安装 OpenJDK 17
+   - 执行：brew install openjdk@17
+
+2. 创建符号链接
+   - 执行：sudo ln -sfn /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-17.jdk
+
+3. 验证 JDK 安装
+   - 执行：/opt/homebrew/opt/openjdk@17/bin/java -version
+   - 显示 Java 版本号
+
+### 2.3 安装 Node.js 和 pnpm
+
+1. 安装 Node.js
+   - 执行：brew install node
+
+2. 验证 Node.js 安装
+   - 执行：node --version
+   - 执行：npm --version
+   - 显示版本号
+
+3. 安装 pnpm
+   - 执行：npm install -g pnpm
+
+4. 验证 pnpm 安装
+   - 执行：pnpm --version
+   - 显示版本号
+
+### 2.4 安装 Maven
+
+1. 安装 Maven
+   - 执行：brew install maven
+
+2. 验证 Maven 安装
+   - 执行：mvn --version
+   - 显示版本号
+
+### 2.5 配置环境变量
+
+1. 检查 ~/.zshrc 是否已包含环境变量配置
+   - 如果没有，添加以下内容到 ~/.zshrc：</code></pre></p>
+<h1 id="Java-环境变量"><a href="#Java-环境变量" class="headerlink" title="Java 环境变量"></a>Java 环境变量</h1><p>   export JAVA_HOME&#x3D;&#x2F;opt&#x2F;homebrew&#x2F;opt&#x2F;openjdk@17<br>   export PATH&#x3D;”$JAVA_HOME&#x2F;bin:$PATH”</p>
+<h1 id="Maven-环境变量"><a href="#Maven-环境变量" class="headerlink" title="Maven 环境变量"></a>Maven 环境变量</h1><p>   export MAVEN_HOME&#x3D;&#x2F;opt&#x2F;homebrew&#x2F;opt&#x2F;maven<br>   export PATH&#x3D;”$MAVEN_HOME&#x2F;bin:$PATH”</p>
+<h1 id="Node-js-环境变量"><a href="#Node-js-环境变量" class="headerlink" title="Node.js 环境变量"></a>Node.js 环境变量</h1><p>   export NODE_HOME&#x3D;&#x2F;opt&#x2F;homebrew&#x2F;opt&#x2F;node<br>   export PATH&#x3D;”$NODE_HOME&#x2F;bin:$PATH”</p>
+<h1 id="npm-全局包路径"><a href="#npm-全局包路径" class="headerlink" title="npm 全局包路径"></a>npm 全局包路径</h1><p>   export PATH&#x3D;”$HOME&#x2F;.npm-global&#x2F;bin:$PATH”</p>
+<h1 id="pnpm-环境变量"><a href="#pnpm-环境变量" class="headerlink" title="pnpm 环境变量"></a>pnpm 环境变量</h1><p>   export PNPM_HOME&#x3D;”$HOME&#x2F;Library&#x2F;pnpm”<br>   export PATH&#x3D;”$PNPM_HOME:$PATH”<br>   <pre><code class="highlight plaintext">
+2. 重新加载配置
+   - 执行：source ~/.zshrc
+
+3. 验证环境变量
+   - 执行：echo $JAVA_HOME
+   - 执行：echo $MAVEN_HOME
+   - 执行：echo $NODE_HOME
+   - 执行：echo $PNPM_HOME
+   - 执行：java -version
+   - 执行：mvn -version
+   - 执行：node --version
+   - 执行：npm --version
+   - 执行：pnpm --version
+   - 确认所有命令都能正常工作
+
+---
+
+## 第三部分：安装开发工具
+
+### 3.1 安装代码编辑器
+
+1. 安装 Visual Studio Code
+   - 执行：brew install --cask visual-studio-code
+   - 验证：ls /Applications/ | grep &quot;Visual Studio Code&quot;
+
+2. 安装 Cursor
+   - 执行：brew install --cask cursor
+   - 验证：ls /Applications/ | grep Cursor
+
+### 3.2 安装数据库工具
+
+1. 安装 DataGrip
+   - 执行：brew install --cask datagrip
+   - 验证：ls /Applications/ | grep DataGrip
+
+### 3.3 安装其他开发工具
+
+1. 安装 Codex
+   - 执行：brew install --cask codex
+   - 验证：ls /Applications/ | grep Codex
+
+2. 安装 Docker
+   - 执行：brew install --cask docker
+   - 验证：ls /Applications/ | grep Docker
+
+3. 安装 Podman
+   - 执行：brew install podman
+   - 验证：podman --version
+
+---
+
+## 第四部分：安装系统工具
+
+### 4.1 安装浏览器
+
+1. 安装 Google Chrome
+   - 执行：brew install --cask google-chrome
+   - 验证：ls /Applications/ | grep &quot;Google Chrome&quot;
+
+### 4.2 安装系统工具
+
+1. 安装 AppCleaner
+   - 执行：brew install --cask appcleaner
+   - 验证：ls /Applications/ | grep AppCleaner
+
+2. 安装 ZeroTier
+   - 执行：brew install --cask zerotier-one
+   - 验证：ls /Applications/ | grep ZeroTier
+
+3. 安装 Windows App
+   - 执行：brew install --cask windows-app
+   - 验证：ls /Applications/ | grep &quot;Windows App&quot;
+
+4. 安装 UU 远程
+   - 执行：brew install --cask uuremote
+   - 验证：ls /Applications/ | grep &quot;UU&quot;
+
+---
+
+## 第五部分：修改系统偏好设置
+
+### 5.1 配置 Dock
+
+1. 设置 Dock 自动隐藏延迟为 0
+   - 执行：defaults write com.apple.dock autohide-delay -float 0
+
+2. 删除动画时间修改器（保持默认动画）
+   - 执行：defaults delete com.apple.dock autohide-time-modifier
+
+3. 重启 Dock
+   - 执行：killall Dock
+
+4. 验证 Dock 设置
+   - 执行：defaults read com.apple.dock autohide-delay
+   - 应该显示：0
+
+### 5.2 配置 Fn 键
+
+1. 设置 Fn 键为标准功能键模式
+   - 执行：defaults write NSGlobalDomain com.apple.keyboard.fnState -bool true
+
+2. 验证 Fn 键设置
+   - 执行：defaults read NSGlobalDomain com.apple.keyboard.fnState
+   - 应该显示：1
+
+### 5.3 配置触控板速度
+
+1. 设置触控板移动速度为 2.0
+   - 执行：defaults write NSGlobalDomain com.apple.trackpad.scaling -float 2.0
+
+2. 验证触控板速度
+   - 执行：defaults read NSGlobalDomain com.apple.trackpad.scaling
+   - 应该显示：2
+
+### 5.4 配置触控板点按力度
+
+1. 设置触控板点按力度为弱点按
+   - 执行：defaults write com.apple.AppleMultitouchTrackpad FirstClickThreshold -int 0
+   - 执行：defaults write com.apple.AppleMultitouchTrackpad SecondClickThreshold -int 0
+
+2. 验证触控板点按力度
+   - 执行：defaults read com.apple.AppleMultitouchTrackpad FirstClickThreshold
+   - 应该显示：0
+
+---
+
+## 完成后总结
+
+请提供以下信息：
+
+### 1. 安装成功的工具列表
+列出所有已安装并验证成功的工具及其版本号：
+- Homebrew
+- Git
+- JDK 17
+- Node.js
+- npm
+- pnpm
+- Maven
+- Visual Studio Code
+- Cursor
+- DataGrip
+- Codex
+- Docker
+- Podman
+- Google Chrome
+- AppCleaner
+- ZeroTier
+- Windows App
+- UU 远程
+
+### 2. 环境变量配置
+确认以下环境变量已正确配置：
+- JAVA_HOME
+- MAVEN_HOME
+- NODE_HOME
+- PNPM_HOME
+- PATH
+
+### 3. 系统设置
+确认以下系统设置已修改：
+- Dock 自动隐藏延迟：0 秒
+- Fn 键：标准功能键模式
+- 触控板速度：2.0
+- 触控板点按力度：0（弱点按）
+
+### 4. 需要重启生效的设置
+列出需要重新登录或重启才能生效的设置：
+- Fn 键设置
+- 触控板设置
+
+### 5. 需要手动完成的任务
+提醒我：
+- 配置 Git 用户信息
+- 启动 Docker Desktop 应用（如需使用 Docker）
+- 初始化 Podman 虚拟机（如需使用 Podman）：
+  - podman machine init
+  - podman machine start
+
+### 6. 验证命令清单
+提供完整的验证命令列表，让我可以再次确认所有工具都正常工作。
+
+---
+
+请开始执行，每完成一个步骤都要验证成功后再继续。如果某个步骤失败，请告诉我错误信息，我们一起解决。</code></pre></p>
+<hr>
+<h2 id="配置完成后"><a href="#配置完成后" class="headerlink" title="配置完成后"></a>配置完成后</h2><h3 id="手动完成的任务"><a href="#手动完成的任务" class="headerlink" title="手动完成的任务"></a>手动完成的任务</h3><ol>
+<li><p><strong>配置 Git 用户信息</strong></p>
+<pre><code class="highlight bash">git config --global user.name <span class="string">&quot;Your Name&quot;</span>
+git config --global user.email <span class="string">&quot;your.email@example.com&quot;</span></code></pre>
+</li>
+<li><p><strong>启动 Docker（可选）</strong></p>
+<ul>
+<li>打开 Docker Desktop 应用</li>
+<li>等待 Docker 引擎启动完成</li>
+<li>验证：<code>docker --version</code></li>
+</ul>
+</li>
+<li><p><strong>初始化 Podman（可选）</strong></p>
+<pre><code class="highlight bash">podman machine init
+podman machine start
+podman machine list</code></pre>
+</li>
+<li><p><strong>重启系统</strong></p>
+<ul>
+<li>重新登录或重启 Mac，使 Fn 键和触控板设置生效</li>
+</ul>
+</li>
+</ol>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/briefing/">Briefing</a></li>
+        
+          <li><a href="/projects/">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-number">1.</span> <span class="toc-text">准备工作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-Claude-Code-CLI"><span class="toc-number">1.1.</span> <span class="toc-text">安装 Claude Code CLI</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%8F%90%E7%A4%BA%E8%AF%8D"><span class="toc-number">2.</span> <span class="toc-text">配置提示词</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%A4%96-Mac-%E7%8E%AF%E5%A2%83%E4%B8%80%E9%94%AE%E9%85%8D%E7%BD%AE%E6%8F%90%E7%A4%BA%E8%AF%8D"><span class="toc-number">2.1.</span> <span class="toc-text">🤖 Mac 环境一键配置提示词</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Java-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number"></span> <span class="toc-text">Java 环境变量</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Maven-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number"></span> <span class="toc-text">Maven 环境变量</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Node-js-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number"></span> <span class="toc-text">Node.js 环境变量</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#npm-%E5%85%A8%E5%B1%80%E5%8C%85%E8%B7%AF%E5%BE%84"><span class="toc-number"></span> <span class="toc-text">npm 全局包路径</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#pnpm-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number"></span> <span class="toc-text">pnpm 环境变量</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E5%AE%8C%E6%88%90%E5%90%8E"><span class="toc-number">1.</span> <span class="toc-text">配置完成后</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%8B%E5%8A%A8%E5%AE%8C%E6%88%90%E7%9A%84%E4%BB%BB%E5%8A%A1"><span class="toc-number">1.1.</span> <span class="toc-text">手动完成的任务</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://jaryujun.github.io/2025/12/15/%E4%BD%BF%E7%94%A8%20Claude%20Code%20%E5%AE%8C%E6%88%90%E6%96%B0%20Mac%20%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://jaryujun.github.io/2025/12/15/%E4%BD%BF%E7%94%A8%20Claude%20Code%20%E5%AE%8C%E6%88%90%E6%96%B0%20Mac%20%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/&text=使用 Claude Code 完成新 Mac 的环境配置"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://jaryujun.github.io/2025/12/15/%E4%BD%BF%E7%94%A8%20Claude%20Code%20%E5%AE%8C%E6%88%90%E6%96%B0%20Mac%20%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/&title=使用 Claude Code 完成新 Mac 的环境配置"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://jaryujun.github.io/2025/12/15/%E4%BD%BF%E7%94%A8%20Claude%20Code%20%E5%AE%8C%E6%88%90%E6%96%B0%20Mac%20%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/&is_video=false&description=使用 Claude Code 完成新 Mac 的环境配置"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=使用 Claude Code 完成新 Mac 的环境配置&body=Check out this article: https://jaryujun.github.io/2025/12/15/%E4%BD%BF%E7%94%A8%20Claude%20Code%20%E5%AE%8C%E6%88%90%E6%96%B0%20Mac%20%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://jaryujun.github.io/2025/12/15/%E4%BD%BF%E7%94%A8%20Claude%20Code%20%E5%AE%8C%E6%88%90%E6%96%B0%20Mac%20%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/&title=使用 Claude Code 完成新 Mac 的环境配置"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://jaryujun.github.io/2025/12/15/%E4%BD%BF%E7%94%A8%20Claude%20Code%20%E5%AE%8C%E6%88%90%E6%96%B0%20Mac%20%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/&title=使用 Claude Code 完成新 Mac 的环境配置"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://jaryujun.github.io/2025/12/15/%E4%BD%BF%E7%94%A8%20Claude%20Code%20%E5%AE%8C%E6%88%90%E6%96%B0%20Mac%20%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/&title=使用 Claude Code 完成新 Mac 的环境配置"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://jaryujun.github.io/2025/12/15/%E4%BD%BF%E7%94%A8%20Claude%20Code%20%E5%AE%8C%E6%88%90%E6%96%B0%20Mac%20%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/&title=使用 Claude Code 完成新 Mac 的环境配置"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://jaryujun.github.io/2025/12/15/%E4%BD%BF%E7%94%A8%20Claude%20Code%20%E5%AE%8C%E6%88%90%E6%96%B0%20Mac%20%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/&name=使用 Claude Code 完成新 Mac 的环境配置&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://jaryujun.github.io/2025/12/15/%E4%BD%BF%E7%94%A8%20Claude%20Code%20%E5%AE%8C%E6%88%90%E6%96%B0%20Mac%20%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/&t=使用 Claude Code 完成新 Mac 的环境配置"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Jaryujun
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/briefing/">Briefing</a></li><!--
+     --><!--
+       --><li><a href="/projects/">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
