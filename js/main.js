@@ -1,8 +1,30 @@
 (function() {
   "use strict";
 
+  // 标签默认 display 缓存（等价 jQuery.defaultDisplay），用于覆盖 CSS 的 display:none
+  var defaultDisplay = (function () {
+    var cache = {};
+    return function (nodeName) {
+      if (!cache[nodeName]) {
+        var el = document.createElement(nodeName);
+        document.body.appendChild(el);
+        cache[nodeName] = window.getComputedStyle(el).display;
+        document.body.removeChild(el);
+      }
+      return cache[nodeName];
+    };
+  })();
+
   function setVisible(element, visible) {
-    if (element) element.style.display = visible ? "" : "none";
+    if (!element) return;
+    if (visible) {
+      element.style.display = "";
+      if (window.getComputedStyle(element).display === "none") {
+        element.style.display = defaultDisplay(element.nodeName);
+      }
+    } else {
+      element.style.display = "none";
+    }
   }
 
   function isVisible(element) {
