@@ -1,158 +1,104 @@
-// A local search script with the help of
-// [hexo-generator-search](https://github.com/PaicHyperionDev/hexo-generator-search)
-// Copyright (C) 2015
-// Joseph Pan <http://github.com/wzpan>
-// Shuhao Mao <http://github.com/maoshuhao>
-// This library is free software; you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 2.1 of the
-// License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-// 02110-1301 USA
-//
-// Modified by:
-// Pieter Robberechts <http://github.com/probberechts>
-
-/*exported searchFunc*/
+// Local search adapted from hexo-generator-search. No runtime dependency on jQuery.
+/* exported searchFunc */
 var searchFunc = function(path, searchId, contentId) {
+  "use strict";
 
   function stripHtml(html) {
-    html = html.replace(/<style([\s\S]*?)<\/style>/gi, "");
-    html = html.replace(/<script([\s\S]*?)<\/script>/gi, "");
-    html = html.replace(/<figure([\s\S]*?)<\/figure>/gi, "");
-    html = html.replace(/<\/div>/ig, "\n");
-    html = html.replace(/<\/li>/ig, "\n");
-    html = html.replace(/<li>/ig, "  *  ");
-    html = html.replace(/<\/ul>/ig, "\n");
-    html = html.replace(/<\/p>/ig, "\n");
-    html = html.replace(/<br\s*[\/]?>/gi, "\n");
-    html = html.replace(/<[^>]+>/ig, "");
-    return html;
+    return html
+      .replace(/<style([\s\S]*?)<\/style>/gi, "")
+      .replace(/<script([\s\S]*?)<\/script>/gi, "")
+      .replace(/<figure([\s\S]*?)<\/figure>/gi, "")
+      .replace(/<\/(div|li|ul|p)>/gi, "\n")
+      .replace(/<li>/gi, "  *  ")
+      .replace(/<br\s*[/]?>/gi, "\n")
+      .replace(/<[^>]+>/gi, "");
   }
 
   function getAllCombinations(keywords) {
-    var i, j, result = [];
-
-    for (i = 0; i < keywords.length; i++) {
-        for (j = i + 1; j < keywords.length + 1; j++) {
-            result.push(keywords.slice(i, j).join(" "));
-        }
+    var result = [];
+    for (var i = 0; i < keywords.length; i++) {
+      for (var j = i + 1; j < keywords.length + 1; j++) {
+        result.push(keywords.slice(i, j).join(" "));
+      }
     }
     return result;
   }
 
-  $.ajax({
-    url: path,
-    dataType: "xml",
-    success: function(xmlResponse) {
-      // get the contents from search data
-      var datas = $("entry", xmlResponse).map(function() {
+  var input = document.getElementById(searchId);
+  var resultContent = document.getElementById(contentId);
+  if (!input || !resultContent) return;
+
+  fetch(path)
+    .then(function(response) {
+      if (!response.ok) throw new Error("Search index request failed");
+      return response.text();
+    })
+    .then(function(xmlText) {
+      var xml = new DOMParser().parseFromString(xmlText, "application/xml");
+      var data = Array.from(xml.querySelectorAll("entry")).map(function(entry) {
+        var title = entry.querySelector("title");
+        var content = entry.querySelector("content");
+        var link = entry.querySelector("link");
         return {
-          title: $("title", this).text(),
-          content: $("content", this).text(),
-          url: $("link", this).attr("href")
+          title: title ? title.textContent : "Untitled",
+          content: content ? content.textContent : "",
+          url: link ? link.getAttribute("href") : "#"
         };
-      }).get();
+      });
 
-      var $input = document.getElementById(searchId);
-      if (!$input) { return; }
-      var $resultContent = document.getElementById(contentId);
+      input.addEventListener("input", function() {
+        var query = input.value.trim().toLowerCase();
+        resultContent.innerHTML = "";
+        if (!query) return;
 
-      $input.addEventListener("input", function(){
-        var resultList = [];
-        var keywords = getAllCombinations(this.value.trim().toLowerCase().split(" "))
-          .sort(function(a,b) { return b.split(" ").length - a.split(" ").length; });
-        $resultContent.innerHTML = "";
-        if (this.value.trim().length <= 0) {
-          return;
-        }
-        // perform local searching
-        datas.forEach(function(data) {
+        var keywords = getAllCombinations(query.split(/\s+/))
+          .sort(function(a, b) { return b.split(" ").length - a.split(" ").length; });
+        var results = [];
+
+        data.forEach(function(item) {
+          var title = item.title.trim() || "Untitled";
+          var content = stripHtml(item.content.trim());
+          var lowerTitle = title.toLowerCase();
+          var lowerContent = content.toLowerCase();
           var matches = 0;
-          if (!data.title || data.title.trim() === "") {
-            data.title = "Untitled";
-          }
-          var dataTitle = data.title.trim().toLowerCase();
-          var dataTitleLowerCase = dataTitle.toLowerCase();
-          var dataContent = stripHtml(data.content.trim());
-          var dataContentLowerCase = dataContent.toLowerCase();
-          var dataUrl = data.url;
-          var indexTitle = -1;
-          var indexContent = -1;
           var firstOccur = -1;
-          // only match artiles with not empty contents
-          if (dataContent !== "") {
-            keywords.forEach(function(keyword) {
-              indexTitle = dataTitleLowerCase.indexOf(keyword);
-              indexContent = dataContentLowerCase.indexOf(keyword);
 
-              if( indexTitle >= 0 || indexContent >= 0 ){
-                matches += 1;
-                if (indexContent < 0) {
-                  indexContent = 0;
-                }
-                if (firstOccur < 0) {
-                  firstOccur = indexContent;
-                }
-              }
+          keywords.forEach(function(keyword) {
+            var titleIndex = lowerTitle.indexOf(keyword);
+            var contentIndex = lowerContent.indexOf(keyword);
+            if (titleIndex >= 0 || contentIndex >= 0) {
+              matches += 1;
+              if (firstOccur < 0) firstOccur = Math.max(contentIndex, 0);
+            }
+          });
+
+          if (matches > 0) {
+            var start = Math.max(firstOccur - 20, 0);
+            var end = Math.min(start === 0 ? 100 : firstOccur + 80, content.length);
+            var excerpt = content.substring(start, end);
+            var escapedKeywords = keywords.map(function(keyword) {
+              return keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            });
+            var matcher = new RegExp(escapedKeywords.join("|"), "gi");
+            excerpt = excerpt.replace(matcher, function(keyword) {
+              return "<em class=\"search-keyword\">" + keyword + "</em>";
+            });
+            results.push({
+              rank: matches,
+              html: "<li><a href=\"" + item.url + "\" class=\"search-result-title\">" + title +
+                "</a><p class=\"search-result\">" + excerpt + "...</p></li>"
             });
           }
-          // show search results
-          if (matches > 0) {
-            var searchResult = {};
-            searchResult.rank = matches;
-            searchResult.str = "<li><a href='"+ dataUrl +"' class='search-result-title'>"+ dataTitle +"</a>";
-            if (firstOccur >= 0) {
-              // cut out 100 characters
-              var start = firstOccur - 20;
-              var end = firstOccur + 80;
-
-              if(start < 0){
-                start = 0;
-              }
-
-              if(start == 0){
-                end = 100;
-              }
-
-              if(end > dataContent.length){
-                end = dataContent.length;
-              }
-
-              var matchContent = dataContent.substring(start, end);
-
-              // highlight all keywords
-              var regS = new RegExp(keywords.join("|"), "gi");
-              matchContent = matchContent.replace(regS, function(keyword) {
-                return "<em class=\"search-keyword\">"+keyword+"</em>";
-              });
-
-              searchResult.str += "<p class=\"search-result\">" + matchContent +"...</p>";
-            }
-            searchResult.str += "</li>";
-            resultList.push(searchResult);
-          }
         });
-        if (resultList.length) {
-          resultList.sort(function(a, b) {
-              return b.rank - a.rank;
-          });
-          var result ="<ul class=\"search-result-list\">";
-          for (var i = 0; i < resultList.length; i++) {
-            result += resultList[i].str;
-          }
-          result += "</ul>";
-          $resultContent.innerHTML = result;
+
+        if (results.length) {
+          results.sort(function(a, b) { return b.rank - a.rank; });
+          resultContent.innerHTML = "<ul class=\"search-result-list\">" +
+            results.map(function(result) { return result.html; }).join("") + "</ul>";
         }
       });
-    }
-  });
+    })
+    .catch(function(error) {
+      console.error(error);
+    });
 };

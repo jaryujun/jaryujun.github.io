@@ -1,113 +1,107 @@
-/**
- * Sets up Justified Gallery.
- */
-if (!!$.prototype.justifiedGallery) {
-  var options = {
-    rowHeight: 140,
-    margins: 4,
-    lastRow: "justify"
-  };
-  $(".article-gallery").justifiedGallery(options);
-}
+(function() {
+  "use strict";
 
-$(document).ready(function() {
+  function setVisible(element, visible) {
+    if (element) element.style.display = visible ? "" : "none";
+  }
 
-  /**
-   * Shows the responsive navigation menu on mobile.
-   */
-  $("#header > #nav > ul > .icon").click(function() {
-    $("#header > #nav > ul").toggleClass("responsive");
+  function isVisible(element) {
+    return !!element && window.getComputedStyle(element).display !== "none";
+  }
+
+  function toggle(element) {
+    setVisible(element, !isVisible(element));
+  }
+
+  document.querySelectorAll("[data-toggle]").forEach(function(trigger) {
+    trigger.addEventListener("click", function(event) {
+      event.preventDefault();
+      toggle(document.getElementById(trigger.dataset.toggle));
+    });
   });
 
+  document.querySelectorAll("[data-scroll-top]").forEach(function(trigger) {
+    trigger.addEventListener("click", function(event) {
+      event.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  });
 
-  /**
-   * Controls the different versions of  the menu in blog post articles 
-   * for Desktop, tablet and mobile.
-   */
-  if ($(".post").length) {
-    var menu = $("#menu");
-    var nav = $("#menu > #nav");
-    var menuIcon = $("#menu-icon, #menu-icon-tablet");
+  document.querySelectorAll("[data-hover-label]").forEach(function(trigger) {
+    var label = document.getElementById(trigger.dataset.hoverLabel);
+    trigger.addEventListener("mouseenter", function() { setVisible(label, true); });
+    trigger.addEventListener("mouseleave", function() { setVisible(label, false); });
+    trigger.addEventListener("focus", function() { setVisible(label, true); });
+    trigger.addEventListener("blur", function() { setVisible(label, false); });
+  });
 
-    /**
-     * Display the menu on hi-res laptops and desktops.
-     */
-    if ($(document).width() >= 1440) {
-      menu.show();
-      menuIcon.addClass("active");
+  var mobileNavTrigger = document.querySelector("#header > #nav > ul > .icon");
+  if (mobileNavTrigger) {
+    mobileNavTrigger.addEventListener("click", function(event) {
+      event.preventDefault();
+      mobileNavTrigger.parentElement.classList.toggle("responsive");
+    });
+  }
+
+  var headerPost = document.getElementById("header-post");
+  if (headerPost) {
+    var menu = headerPost.querySelector(":scope > #menu");
+    var nav = menu ? menu.querySelector(":scope > #nav") : null;
+    var menuIcons = [
+      document.getElementById("menu-icon"),
+      document.getElementById("menu-icon-tablet")
+    ].filter(Boolean);
+    var tabletMenuIcon = document.getElementById("menu-icon-tablet");
+    var tabletTopIcon = document.getElementById("top-icon-tablet");
+
+    if (window.innerWidth >= 1440) {
+      setVisible(menu, true);
+      menuIcons.forEach(function(icon) { icon.classList.add("active"); });
     }
 
-    /**
-     * Display the menu if the menu icon is clicked.
-     */
-    menuIcon.click(function() {
-      if (menu.is(":hidden")) {
-        menu.show();
-        menuIcon.addClass("active");
-      } else {
-        menu.hide();
-        menuIcon.removeClass("active");
-      }
-      return false;
+    menuIcons.forEach(function(icon) {
+      icon.addEventListener("click", function(event) {
+        event.preventDefault();
+        var willShow = !isVisible(menu);
+        setVisible(menu, willShow);
+        menuIcons.forEach(function(item) { item.classList.toggle("active", willShow); });
+      });
     });
 
-    /**
-     * Add a scroll listener to the menu to hide/show the navigation links.
-     */
-    if (menu.length) {
-      $(window).on("scroll", function() {
-        var topDistance = menu.offset().top;
+    var footerPost = document.getElementById("footer-post");
+    var footerTop = footerPost ? footerPost.querySelector("#top") : null;
+    var lastScrollTop = window.scrollY;
 
-        // hide only the navigation links on desktop
-        if (!nav.is(":visible") && topDistance < 50) {
-          nav.show();
-        } else if (nav.is(":visible") && topDistance > 100) {
-          nav.hide();
+    window.addEventListener("scroll", function() {
+      var scrollTop = window.scrollY;
+
+      if (menu) {
+        if (scrollTop < 50) setVisible(nav, true);
+        if (scrollTop > 100) setVisible(nav, false);
+
+        if (!isVisible(document.getElementById("menu-icon"))) {
+          setVisible(tabletMenuIcon, scrollTop < 50);
+          setVisible(tabletTopIcon, scrollTop > 100);
         }
+      }
 
-        // on tablet, hide the navigation icon as well and show a "scroll to top
-        // icon" instead
-        if ( ! $( "#menu-icon" ).is(":visible") && topDistance < 50 ) {
-          $("#menu-icon-tablet").show();
-          $("#top-icon-tablet").hide();
-        } else if (! $( "#menu-icon" ).is(":visible") && topDistance > 100) {
-          $("#menu-icon-tablet").hide();
-          $("#top-icon-tablet").show();
-        }
-      });
-    }
+      if (footerPost) {
+        setVisible(footerPost, scrollTop <= lastScrollTop);
+        setVisible(footerTop, scrollTop > 100);
+        ["nav-footer", "toc-footer", "share-footer"].forEach(function(id) {
+          setVisible(document.getElementById(id), false);
+        });
+      }
 
-    /**
-     * Show mobile navigation menu after scrolling upwards,
-     * hide it again after scrolling downwards.
-     */
-    if ($( "#footer-post").length) {
-      var lastScrollTop = 0;
-      $(window).on("scroll", function() {
-        var topDistance = $(window).scrollTop();
-
-        if (topDistance > lastScrollTop){
-          // downscroll -> show menu
-          $("#footer-post").hide();
-        } else {
-          // upscroll -> hide menu
-          $("#footer-post").show();
-        }
-        lastScrollTop = topDistance;
-
-        // close all submenu"s on scroll
-        $("#nav-footer").hide();
-        $("#toc-footer").hide();
-        $("#share-footer").hide();
-
-        // show a "navigation" icon when close to the top of the page, 
-        // otherwise show a "scroll to the top" icon
-        if (topDistance < 50) {
-          $("#actions-footer > #top").hide();
-        } else if (topDistance > 100) {
-          $("#actions-footer > #top").show();
-        }
-      });
-    }
+      lastScrollTop = Math.max(scrollTop, 0);
+    }, { passive: true });
   }
-});
+
+  if (window.jQuery && window.jQuery.fn.justifiedGallery) {
+    window.jQuery(".article-gallery").justifiedGallery({
+      rowHeight: 140,
+      margins: 4,
+      lastRow: "justify"
+    });
+  }
+})();
